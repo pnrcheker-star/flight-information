@@ -1,3 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight PNR Checker</title>
+
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    background:#000;
+    color:#fff;
+}
+
+/* BOX */
+.box {
+    margin:20px;
+    padding:20px;
+    border-radius:25px;
+    background:#111;
+    box-shadow:0 0 30px rgba(255,0,0,0.2);
+}
+
+.title {
+    text-align:center;
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.desc {
+    text-align:center;
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+/* INPUT */
+input {
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:none;
+    background:#222;
+    color:#fff;
+    margin-bottom:15px;
+}
+
+/* BUTTON */
+button {
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:red;
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* RESULT */
+.result {
+    margin-top:20px;
+    display:none;
+    background:#1a1a1a;
+    border-radius:20px;
+    padding:20px;
+}
+
+/* GRID */
+.row {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.label {
+    font-size:12px;
+    color:#aaa;
+}
+
+.value {
+    font-weight:bold;
+}
+
+/* ROUTE */
+.route {
+    text-align:center;
+    margin:15px 0;
+    font-size:18px;
+}
+
+/* STATUS */
+.status {
+    margin-top:15px;
+    background:#FFD600;
+    color:#000;
+    text-align:center;
+    padding:12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+/* TIMER */
+.timer {
+    margin-top:10px;
+    text-align:center;
+    color:#ff3b30;
+    font-size:14px;
+}
+
+/* INFO */
+.info {
+    text-align:center;
+    font-size:13px;
+    color:#aaa;
+}
+
+/* QR */
+.qr {
+    text-align:center;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="title">✈️ Flight PNR Checker</div>
+
+<p class="desc">
+Cek status penerbangan Anda dengan mudah menggunakan kode PNR. 
+Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
+</p>
+
+<input type="text" id="pnr" placeholder="Masukkan kode PNR">
+<button onclick="cekPNR()">Cek Status</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
 <script>
 
 // DATABASE
@@ -13,8 +157,10 @@ const db = {
     gate:"A2",
     seat:"18A",
     total:"Rp 1.739.900",
-    status:"Pending Payment", // 🔥 UBAH DI SINI
+
+    status:"Pending Payment",
     expired:1800, // 30 menit
+
     class:"Economy",
     bagasi:"20kg",
     konsumsi:"Snack"
@@ -79,31 +225,26 @@ function cekPNR(){
             </div>
         </div>
 
-        <div style="margin-top:10px;font-size:13px;color:#aaa;">
+        <div class="info">
         Class: ${d.class} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
         </div>
 
         <div class="status">⏳ ${d.status}</div>
 
-        ${d.status === "Pending Payment" ? `
-        <div id="timer" style="margin-top:10px;text-align:center;color:#ff3b30;font-size:14px;"></div>
-        <div style="text-align:center;font-size:13px;color:#aaa;">
+        <div class="timer" id="timer"></div>
+
+        <div class="info">
         Segera lakukan pembayaran sebelum harga berubah
         </div>
-        ` : ""}
 
         <div class="qr">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${input}">
         </div>
-
         `;
 
         result.style.display="block";
 
-        // 🔥 JALANKAN TIMER
-        if(d.status === "Pending Payment"){
-            startTimer(d.expired);
-        }
+        startTimer(d.expired);
 
     } else {
         alert("PNR tidak ditemukan");
@@ -111,7 +252,7 @@ function cekPNR(){
 }
 
 
-// TIMER FUNCTION
+// TIMER
 function startTimer(duration) {
     let timer = duration;
     const display = document.getElementById("timer");
@@ -122,21 +263,17 @@ function startTimer(duration) {
 
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        if(display){
-            display.innerHTML = `⏳ Sisa waktu: ${minutes}:${seconds}`;
-        }
+        display.innerHTML = `⏳ Sisa waktu: ${minutes}:${seconds}`;
 
         if (--timer < 0) {
             clearInterval(interval);
-            if(display){
-                display.innerHTML = "❌ Harga telah berubah, silakan pesan ulang";
-            }
+            display.innerHTML = "❌ Harga telah berubah, silakan pesan ulang";
         }
     }, 1000);
 }
 
 
-// AUTO DARI SCAN
+// AUTO SCAN
 const urlParams = new URLSearchParams(window.location.search);
 const pnr = urlParams.get('pnr');
 
@@ -146,3 +283,6 @@ if (pnr) {
 }
 
 </script>
+
+</body>
+</html>
