@@ -3,32 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cek Kode PNR</title>
+<title>Flight PNR Checker</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background: #000 !important;
+    color: #fff;
 }
 
-/* CARD */
-.container {
-    width: 350px;
-    background: #fff;
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 15px;
+    background: #000;
+    font-weight: bold;
+}
+
+/* BOX */
+.box {
+    margin: 20px;
+    background: #111;
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 /* TITLE */
-h2 {
+.title {
     text-align: center;
-    margin-bottom: 15px;
+    font-size: 22px;
+    margin-bottom: 20px;
 }
 
 /* INPUT */
@@ -37,40 +42,35 @@ input {
     padding: 15px;
     border-radius: 12px;
     border: none;
-    background: #f1f1f1;
+    background: #222;
+    color: #fff;
     margin-bottom: 15px;
-    font-size: 16px;
 }
 
 /* BUTTON */
 button {
     width: 100%;
     padding: 15px;
-    border: none;
     border-radius: 12px;
+    border: none;
     background: red;
     color: white;
-    font-size: 16px;
-    cursor: pointer;
     font-weight: bold;
 }
 
 /* RESULT */
 .result {
     margin-top: 20px;
-    display: none;
-    background: #f5f5f5;
+    background: #1a1a1a;
+    border-radius: 20px;
     padding: 15px;
-    border-radius: 12px;
+    display: none;
 }
 
-.row {
-    margin-bottom: 10px;
-}
-
+/* TEXT */
 .label {
     font-size: 12px;
-    color: gray;
+    color: #aaa;
 }
 
 .value {
@@ -80,11 +80,11 @@ button {
 /* STATUS */
 .status {
     margin-top: 10px;
-    padding: 10px;
+    background: #00c853;
+    color: #000;
     text-align: center;
-    border-radius: 10px;
-    background: green;
-    color: white;
+    padding: 10px;
+    border-radius: 20px;
     font-weight: bold;
 }
 </style>
@@ -92,9 +92,11 @@ button {
 
 <body>
 
-<div class="container">
+<div class="header">Flight PNR Checker</div>
 
-    <h2>🔍 Cek Kode PNR</h2>
+<div class="box">
+
+    <div class="title">✈️ Flight PNR Checker</div>
 
     <input type="text" id="pnr" placeholder="Masukkan kode PNR">
 
@@ -105,69 +107,43 @@ button {
 </div>
 
 <script>
-
-/* DATABASE PNR */
 const databasePNR = {
     "JHMAUZ": {
         nama: "Ny. Muliani",
         maskapai: "Batik Air",
         flight: "ID-6316",
-        rute: "PNK → UPG",
-        waktu: "14:55 - 19:20",
+        jam: "14:55 - 19:20",
+        dari: "PNK (Pontianak)",
+        ke: "UPG (Makassar)",
+        kelas: "Ekonomi",
+        bagasi: "20 kg",
+        total: "Rp 1.739.900",
         status: "Confirmed"
     }
 };
 
-/* FUNCTION */
 function cekPNR() {
     let input = document.getElementById("pnr").value.toUpperCase();
     let result = document.getElementById("result");
 
-    if (!input) {
-        alert("Masukkan kode PNR!");
-        return;
-    }
-
     if (databasePNR[input]) {
-        let data = databasePNR[input];
+        let d = databasePNR[input];
 
         result.innerHTML = `
-            <div class="row">
-                <div class="label">Nama</div>
-                <div class="value">${data.nama}</div>
-            </div>
-
-            <div class="row">
-                <div class="label">Maskapai</div>
-                <div class="value">${data.maskapai}</div>
-            </div>
-
-            <div class="row">
-                <div class="label">Flight</div>
-                <div class="value">${data.flight}</div>
-            </div>
-
-            <div class="row">
-                <div class="label">Rute</div>
-                <div class="value">${data.rute}</div>
-            </div>
-
-            <div class="row">
-                <div class="label">Waktu</div>
-                <div class="value">${data.waktu}</div>
-            </div>
-
-            <div class="status">✔ ${data.status}</div>
+            <p><b>${d.nama}</b></p>
+            <p>${d.maskapai}</p>
+            <p>${d.flight}</p>
+            <p>${d.dari} → ${d.ke}</p>
+            <p>${d.jam}</p>
+            <p>${d.total}</p>
+            <div class="status">${d.status}</div>
         `;
 
         result.style.display = "block";
-
     } else {
-        result.style.display = "none";
         alert("PNR tidak ditemukan!");
     }
 }
-
 </script>
 
 </body>
