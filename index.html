@@ -7,47 +7,48 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial;
-    background: #000;
-    color: #fff;
+    margin:0;
+    font-family:Arial;
+    background:#000;
+    color:#fff;
 }
 
 /* CONTAINER */
 .box {
-    margin: 20px;
-    padding: 20px;
-    background: linear-gradient(145deg,#0a0a0a,#1a1a1a);
-    border-radius: 25px;
-    box-shadow: 0 0 30px rgba(255,255,255,0.05);
+    margin:20px;
+    padding:20px;
+    border-radius:25px;
+    background:linear-gradient(145deg,#0a0a0a,#1a1a1a);
+    box-shadow:0 0 20px rgba(255,255,255,0.05),
+               0 0 40px rgba(255,0,0,0.1);
 }
 
 /* TITLE */
 .title {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 10px;
+    text-align:center;
+    font-size:22px;
+    margin-bottom:10px;
 }
 
 /* DESC */
 .desc {
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 20px;
+    text-align:center;
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:20px;
 }
 
 /* PNR LIST */
 .pnr-list {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
 }
 
 .pnr-item {
     flex:1;
-    padding:10px;
     background:#222;
+    padding:10px;
     border-radius:10px;
     text-align:center;
     cursor:pointer;
@@ -55,33 +56,33 @@ body {
 
 /* INPUT */
 input {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    background: #222;
-    color: #fff;
-    margin-bottom: 15px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#222;
+    color:#fff;
+    margin-bottom:15px;
 }
 
 /* BUTTON */
 button {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    background: red;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:red;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
 }
 
 /* RESULT */
 .result {
     display:none;
     margin-top:20px;
-    background:#111;
     padding:15px;
+    background:#111;
     border-radius:20px;
 }
 
@@ -92,17 +93,18 @@ button {
     margin-bottom:10px;
 }
 
-/* ROUTE */
+/* ROUTE VERTICAL */
 .route {
     text-align:center;
-    font-size:18px;
-    margin:15px 0;
+    margin:20px 0;
+    font-size:16px;
+    line-height:1.6;
 }
 
 /* STATUS */
 .status {
     margin-top:15px;
-    padding:10px;
+    padding:12px;
     border-radius:20px;
     text-align:center;
     font-weight:bold;
@@ -110,16 +112,11 @@ button {
 
 .green {background:#00c853;color:#000;}
 .yellow {background:#ffd600;color:#000;}
-.blue {background:#00b0ff;color:#000;}
-.red {background:#ff1744;color:#fff;}
 
 /* QR */
 .qr {
-    width:80px;
-    height:80px;
-    background:#fff;
-    border-radius:10px;
-    margin-top:10px;
+    text-align:center;
+    margin-top:15px;
 }
 
 /* EXTRA */
@@ -127,6 +124,13 @@ button {
     margin-top:10px;
     font-size:13px;
     color:#ccc;
+}
+
+/* DIVIDER */
+hr {
+    border:0;
+    border-top:1px solid #222;
+    margin:10px 0;
 }
 </style>
 </head>
@@ -157,97 +161,107 @@ Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
 
 <script>
 const db = {
-    "JHMAUZ":{
-        nama:"Ny. Muliani",
-        maskapai:"Batik Air",
-        dari:"Pontianak (PNK)",
-        ke:"Makassar (UPG)",
-        flight:"ID-6316",
-        jam:"14:55 - 19:20",
-        gate:"A2",
-        seat:"18A",
-        boarding:"14:25",
-        bagasi:"20kg",
-        kelas:"Economy",
-        konsumsi:"Snack",
-        total:"Rp 1.739.900",
-        status:"Check-in Open",
-        warna:"yellow"
-    },
-    "KP243X":{
-        nama:"Budi Santoso",
-        maskapai:"Garuda Indonesia",
-        dari:"Jakarta (CGK)",
-        ke:"Bali (DPS)",
-        flight:"GA-204",
-        jam:"10:00 - 13:00",
-        gate:"B1",
-        seat:"12A",
-        boarding:"09:20",
-        bagasi:"25kg",
-        kelas:"Business",
-        konsumsi:"Full Meal",
-        total:"Rp 3.200.000",
-        status:"Confirmed",
-        warna:"green"
-    }
+"KP243X":{
+nama:"Budi Santoso",
+maskapai:"Garuda Indonesia",
+dari:"Jakarta (CGK)",
+ke:"Bali (DPS)",
+flight:"GA-204",
+jam:"10:00 - 13:00",
+gate:"B1",
+seat:"12A",
+boarding:"09:20",
+kelas:"Business",
+bagasi:"25kg",
+konsumsi:"Full Meal",
+total:"Rp 3.200.000",
+status:"Confirmed",
+warna:"green"
+},
+"JHMAUZ":{
+nama:"Ny. Muliani",
+maskapai:"Batik Air",
+dari:"Pontianak (PNK)",
+ke:"Makassar (UPG)",
+flight:"ID-6316",
+jam:"14:55 - 19:20",
+gate:"A2",
+seat:"18A",
+boarding:"14:25",
+kelas:"Economy",
+bagasi:"20kg",
+konsumsi:"Snack",
+total:"Rp 1.739.900",
+status:"Check-in Open",
+warna:"yellow"
+}
 };
 
-function setPNR(kode){
-    document.getElementById("pnr").value = kode;
+function setPNR(k){
+document.getElementById("pnr").value=k;
 }
 
 function cekPNR(){
-    let pnr = document.getElementById("pnr").value.toUpperCase();
-    let r = document.getElementById("result");
+let pnr=document.getElementById("pnr").value.toUpperCase();
+let r=document.getElementById("result");
 
-    if(db[pnr]){
-        let d = db[pnr];
+if(db[pnr]){
+let d=db[pnr];
 
-        r.innerHTML = `
-        <div class="row">
-            <div>
-                <small>Nama</small><br>${d.nama}
-            </div>
-            <div>
-                <small>Maskapai</small><br>${d.maskapai}
-            </div>
-        </div>
+r.innerHTML=`
 
-        <div class="route">
-            ${d.dari} ✈ ${d.ke}
-        </div>
+<div class="row">
+<div>
+<small>Nama</small><br>${d.nama}
+</div>
+<div>
+<small>Maskapai</small><br>${d.maskapai}
+</div>
+</div>
 
-        <div class="row">
-            <div>Flight<br>${d.flight}</div>
-            <div>Jam<br>${d.jam}</div>
-        </div>
+<hr>
 
-        <div class="row">
-            <div>Gate<br>${d.gate}</div>
-            <div>Seat<br>${d.seat}</div>
-        </div>
+<div class="route">
+${d.dari}<br>
+✈<br>
+${d.ke}
+</div>
 
-        <div class="row">
-            <div>Boarding<br>${d.boarding}</div>
-            <div>Total<br>${d.total}</div>
-        </div>
+<hr>
 
-        <div class="extra">
-            Class: ${d.kelas} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
-        </div>
+<div class="row">
+<div>Flight<br>${d.flight}</div>
+<div>Jam<br>${d.jam}</div>
+</div>
 
-        <div class="status ${d.warna}">
-            ${d.status}
-        </div>
+<div class="row">
+<div>🛫 Gate<br>${d.gate}</div>
+<div>💺 Seat<br>${d.seat}</div>
+</div>
 
-        <div class="qr"></div>
-        `;
+<div class="row">
+<div>⏰ Boarding<br>${d.boarding}</div>
+<div>Total<br>${d.total}</div>
+</div>
 
-        r.style.display="block";
-    } else {
-        alert("PNR tidak ditemukan");
-    }
+<div class="extra">
+Class: ${d.kelas} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
+</div>
+
+<div class="status ${d.warna}">
+✔ ${d.status}
+</div>
+
+<div class="qr">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${pnr}">
+</div>
+
+`;
+
+r.style.display="block";
+}else{
+alert("PNR tidak ditemukan");
+}
 }
 </script>
 
