@@ -7,261 +7,197 @@
 
 <style>
 body {
-    margin:0;
-    font-family:Arial;
-    background:#000;
-    color:#fff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
 }
-
-/* CONTAINER */
+.header {
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+}
 .box {
-    margin:20px;
-    padding:20px;
-    border-radius:25px;
-    background:linear-gradient(145deg,#0a0a0a,#1a1a1a);
-    box-shadow:0 0 20px rgba(255,255,255,0.05),
-               0 0 40px rgba(255,0,0,0.1);
+    margin: 20px;
+    background: #111;
+    border-radius: 25px;
+    padding: 20px;
 }
-
-/* TITLE */
 .title {
-    text-align:center;
-    font-size:22px;
-    margin-bottom:10px;
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 10px;
 }
-
-/* DESC */
 .desc {
-    text-align:center;
-    color:#aaa;
-    font-size:14px;
-    margin-bottom:20px;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 20px;
 }
-
-/* PNR LIST */
-.pnr-list {
-    display:flex;
-    gap:10px;
-    margin-bottom:15px;
-}
-
-.pnr-item {
-    flex:1;
-    background:#222;
-    padding:10px;
-    border-radius:10px;
-    text-align:center;
-    cursor:pointer;
-}
-
-/* INPUT */
 input {
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:#222;
-    color:#fff;
-    margin-bottom:15px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: #222;
+    color: #fff;
+    margin-bottom: 15px;
 }
-
-/* BUTTON */
 button {
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:red;
-    color:#fff;
-    font-size:16px;
-    font-weight:bold;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
 }
-
-/* RESULT */
 .result {
-    display:none;
-    margin-top:20px;
-    padding:15px;
-    background:#111;
-    border-radius:20px;
+    margin-top: 20px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    padding: 15px;
+    display: none;
 }
-
-/* ROW */
 .row {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
-
-/* ROUTE VERTICAL */
+.label {
+    font-size: 12px;
+    color: #aaa;
+}
+.value {
+    font-weight: bold;
+}
 .route {
-    text-align:center;
-    margin:20px 0;
-    font-size:16px;
-    line-height:1.6;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 18px;
 }
-
-/* STATUS */
 .status {
-    margin-top:15px;
-    padding:12px;
-    border-radius:20px;
-    text-align:center;
-    font-weight:bold;
-}
-
-.green {background:#00c853;color:#000;}
-.yellow {background:#ffd600;color:#000;}
-
-/* QR */
-.qr {
-    text-align:center;
-    margin-top:15px;
-}
-
-/* EXTRA */
-.extra {
-    margin-top:10px;
-    font-size:13px;
-    color:#ccc;
-}
-
-/* DIVIDER */
-hr {
-    border:0;
-    border-top:1px solid #222;
-    margin:10px 0;
+    margin-top: 15px;
+    background: #00c853;
+    color: #000;
+    text-align: center;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="header">Flight PNR Checker</div>
 
+<div class="box">
 <div class="title">✈️ Flight PNR Checker</div>
 
-<div class="desc">
-Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
-</div>
+<p class="desc">
+Cek status penerbangan Anda dengan mudah menggunakan kode PNR. 
+Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
+</p>
 
-<div class="pnr-list">
-    <div class="pnr-item" onclick="setPNR('JHMAUZ')">JHMAUZ</div>
-    <div class="pnr-item" onclick="setPNR('KP243X')">KP243X</div>
-    <div class="pnr-item" onclick="setPNR('ZX91LM')">ZX91LM</div>
-</div>
-
-<input id="pnr" placeholder="Masukkan kode PNR">
+<input type="text" id="pnr" placeholder="Masukkan kode PNR">
 
 <button onclick="cekPNR()">Cek Status</button>
 
-<div id="result" class="result"></div>
+<div class="result" id="result"></div>
 
 </div>
 
 <script>
 const db = {
-"KP243X":{
-nama:"Budi Santoso",
-maskapai:"Garuda Indonesia",
-dari:"Jakarta (CGK)",
-ke:"Bali (DPS)",
-flight:"GA-204",
-jam:"10:00 - 13:00",
-gate:"B1",
-seat:"12A",
-boarding:"09:20",
-kelas:"Business",
-bagasi:"25kg",
-konsumsi:"Full Meal",
-total:"Rp 3.200.000",
-status:"Confirmed",
-warna:"green"
-},
-"JHMAUZ":{
-nama:"Ny. Muliani",
-maskapai:"Batik Air",
-dari:"Pontianak (PNK)",
-ke:"Makassar (UPG)",
-flight:"ID-6316",
-jam:"14:55 - 19:20",
-gate:"A2",
-seat:"18A",
-boarding:"14:25",
-kelas:"Economy",
-bagasi:"20kg",
-konsumsi:"Snack",
-total:"Rp 1.739.900",
-status:"Check-in Open",
-warna:"yellow"
-}
+    "JHMAUZ": {
+        nama:"Ny. Muliani",
+        maskapai:"Batik Air",
+        flight:"ID-6316",
+        dari:"PNK",
+        ke:"UPG",
+        jam:"14:55 - 19:20",
+        gate:"A2",
+        seat:"18A",
+        total:"Rp 1.739.900",
+        status:"Confirmed"
+    }
 };
 
-function setPNR(k){
-document.getElementById("pnr").value=k;
-}
-
 function cekPNR(){
-let pnr=document.getElementById("pnr").value.toUpperCase();
-let r=document.getElementById("result");
+    let input=document.getElementById("pnr").value.toUpperCase();
+    let result=document.getElementById("result");
 
-if(db[pnr]){
-let d=db[pnr];
+    if(db[input]){
+        let d=db[input];
 
-r.innerHTML=`
+        result.innerHTML=`
+        <div class="row">
+            <div>
+                <div class="label">Nama</div>
+                <div class="value">${d.nama}</div>
+            </div>
+            <div>
+                <div class="label">Maskapai</div>
+                <div class="value">${d.maskapai}</div>
+            </div>
+        </div>
 
-<div class="row">
-<div>
-<small>Nama</small><br>${d.nama}
-</div>
-<div>
-<small>Maskapai</small><br>${d.maskapai}
-</div>
-</div>
+        <div class="route">
+            ${d.dari} ✈ ${d.ke}
+        </div>
 
-<hr>
+        <div class="row">
+            <div>
+                <div class="label">Flight</div>
+                <div class="value">${d.flight}</div>
+            </div>
+            <div>
+                <div class="label">Jam</div>
+                <div class="value">${d.jam}</div>
+            </div>
+        </div>
 
-<div class="route">
-${d.dari}<br>
-✈<br>
-${d.ke}
-</div>
+        <div class="row">
+            <div>
+                <div class="label">Gate</div>
+                <div class="value">${d.gate}</div>
+            </div>
+            <div>
+                <div class="label">Seat</div>
+                <div class="value">${d.seat}</div>
+            </div>
+        </div>
 
-<hr>
+        <div class="row">
+            <div>
+                <div class="label">Total</div>
+                <div class="value">${d.total}</div>
+            </div>
+        </div>
 
-<div class="row">
-<div>Flight<br>${d.flight}</div>
-<div>Jam<br>${d.jam}</div>
-</div>
+        <div class="status">✔ ${d.status}</div>
+        `;
 
-<div class="row">
-<div>🛫 Gate<br>${d.gate}</div>
-<div>💺 Seat<br>${d.seat}</div>
-</div>
+        result.style.display="block";
 
-<div class="row">
-<div>⏰ Boarding<br>${d.boarding}</div>
-<div>Total<br>${d.total}</div>
-</div>
-
-<div class="extra">
-Class: ${d.kelas} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
-</div>
-
-<div class="status ${d.warna}">
-✔ ${d.status}
-</div>
-
-<div class="qr">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${pnr}">
-</div>
-
-`;
-
-r.style.display="block";
-}else{
-alert("PNR tidak ditemukan");
+    } else {
+        alert("PNR tidak ditemukan");
+    }
 }
+
+/* 🔥 AUTO DARI SCAN QR */
+const pnrFromURL = new URLSearchParams(window.location.search).get("pnr");
+
+if (pnrFromURL) {
+    const input = document.getElementById("pnr");
+
+    input.value = pnrFromURL;
+
+    setTimeout(() => {
+        cekPNR();
+    }, 400);
 }
 </script>
 
