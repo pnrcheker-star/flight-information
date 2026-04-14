@@ -9,7 +9,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #000 !important;
+    background: #000;
     color: #fff;
 }
 
@@ -17,15 +17,18 @@ body {
 .header {
     text-align: center;
     padding: 15px;
-    background: #000;
     font-weight: bold;
+}
+
+/* CONTAINER */
+.container {
+    padding: 20px;
 }
 
 /* BOX */
 .box {
-    margin: 20px;
-    background: #111;
-    border-radius: 20px;
+    background: #1a1a1a;
+    border-radius: 25px;
     padding: 20px;
 }
 
@@ -40,9 +43,9 @@ body {
 input {
     width: 100%;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 15px;
     border: none;
-    background: #222;
+    background: #333;
     color: #fff;
     margin-bottom: 15px;
 }
@@ -51,20 +54,32 @@ input {
 button {
     width: 100%;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 15px;
     border: none;
     background: red;
     color: white;
     font-weight: bold;
+    font-size: 16px;
 }
 
-/* RESULT */
+/* RESULT CARD */
 .result {
     margin-top: 20px;
-    background: #1a1a1a;
-    border-radius: 20px;
-    padding: 15px;
+    background: #2a2a2a;
+    border-radius: 25px;
+    padding: 20px;
     display: none;
+}
+
+/* GRID */
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.col {
+    width: 48%;
 }
 
 /* TEXT */
@@ -75,17 +90,44 @@ button {
 
 .value {
     font-weight: bold;
+    font-size: 16px;
+}
+
+/* BIG ROUTE */
+.route {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.route h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.route span {
+    font-size: 20px;
 }
 
 /* STATUS */
 .status {
-    margin-top: 10px;
-    background: #00c853;
+    margin-top: 15px;
+    background: #00e676;
     color: #000;
     text-align: center;
-    padding: 10px;
-    border-radius: 20px;
+    padding: 12px;
+    border-radius: 25px;
     font-weight: bold;
+}
+
+/* QR */
+.qr {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.qr img {
+    width: 90px;
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -94,27 +136,36 @@ button {
 
 <div class="header">Flight PNR Checker</div>
 
+<div class="container">
+
 <div class="box">
 
-    <div class="title">✈️ Flight PNR Checker</div>
+<div class="title">✈️ Flight PNR Checker</div>
 
-    <input type="text" id="pnr" placeholder="Masukkan kode PNR">
+<input type="text" id="pnr" placeholder="Masukkan Kode PNR">
 
-    <button onclick="cekPNR()">Cek Status</button>
+<button onclick="cekPNR()">Cek Status</button>
 
-    <div class="result" id="result"></div>
+<div class="result" id="result"></div>
+
+</div>
 
 </div>
 
 <script>
-const databasePNR = {
+
+/* DATABASE */
+const db = {
     "JHMAUZ": {
         nama: "Ny. Muliani",
         maskapai: "Batik Air",
         flight: "ID-6316",
-        jam: "14:55 - 19:20",
         dari: "PNK (Pontianak)",
         ke: "UPG (Makassar)",
+        jam: "14:55 - 19:20",
+        boarding: "14:25",
+        gate: "A2",
+        seat: "18A",
         kelas: "Ekonomi",
         bagasi: "20 kg",
         total: "Rp 1.739.900",
@@ -126,24 +177,80 @@ function cekPNR() {
     let input = document.getElementById("pnr").value.toUpperCase();
     let result = document.getElementById("result");
 
-    if (databasePNR[input]) {
-        let d = databasePNR[input];
+    if (db[input]) {
+        let d = db[input];
 
         result.innerHTML = `
-            <p><b>${d.nama}</b></p>
-            <p>${d.maskapai}</p>
-            <p>${d.flight}</p>
-            <p>${d.dari} → ${d.ke}</p>
-            <p>${d.jam}</p>
-            <p>${d.total}</p>
-            <div class="status">${d.status}</div>
+            <div class="row">
+                <div class="col">
+                    <div class="label">Nama</div>
+                    <div class="value">${d.nama}</div>
+                </div>
+                <div class="col">
+                    <div class="label">Maskapai</div>
+                    <div class="value">${d.maskapai}</div>
+                </div>
+            </div>
+
+            <div class="route">
+                <h1>${d.dari.split(" ")[0]} ✈ ${d.ke.split(" ")[0]}</h1>
+                <span>${d.dari} → ${d.ke}</span>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="label">Flight</div>
+                    <div class="value">${d.flight}</div>
+                </div>
+                <div class="col">
+                    <div class="label">Jam</div>
+                    <div class="value">${d.jam}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="label">Boarding</div>
+                    <div class="value">${d.boarding}</div>
+                </div>
+                <div class="col">
+                    <div class="label">Gate / Seat</div>
+                    <div class="value">${d.gate} / ${d.seat}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="label">Kelas</div>
+                    <div class="value">${d.kelas}</div>
+                </div>
+                <div class="col">
+                    <div class="label">Bagasi</div>
+                    <div class="value">${d.bagasi}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="label">Total</div>
+                    <div class="value">${d.total}</div>
+                </div>
+            </div>
+
+            <div class="qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${input}">
+            </div>
+
+            <div class="status">✔ ${d.status}</div>
         `;
 
         result.style.display = "block";
+
     } else {
         alert("PNR tidak ditemukan!");
     }
 }
+
 </script>
 
 </body>
