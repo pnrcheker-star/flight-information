@@ -3,81 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scan QR PNR</title>
+<title>Scan QR Tiket</title>
 
-<!-- Library QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial;
-    background: #000;
-    color: #fff;
-    text-align: center;
+    margin:0;
+    background:#000;
+    color:#fff;
+    font-family:Arial;
+    text-align:center;
 }
 
-.container {
-    padding: 20px;
-}
-
-h1 {
-    margin-top: 20px;
+h2 {
+    margin-top:20px;
 }
 
 #reader {
-    width: 100%;
-    max-width: 300px;
-    margin: 20px auto;
-    border-radius: 20px;
-    overflow: hidden;
+    width:300px;
+    margin:30px auto;
+    border-radius:20px;
+    overflow:hidden;
 }
 
-.result {
-    margin-top: 20px;
-    padding: 15px;
-    background: #111;
-    border-radius: 15px;
-}
-
-a {
-    color: #00ffcc;
+.info {
+    font-size:14px;
+    color:#aaa;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>📷 Scan Kode QR</h1>
-    <p>Arahkan kamera ke QR tiket Anda</p>
+<h2>📷 Scan Tiket</h2>
+<p class="info">Arahkan kamera ke QR tiket</p>
 
-    <div id="reader"></div>
-
-    <div class="result" id="result">
-        Hasil scan akan muncul di sini
-    </div>
-</div>
+<div id="reader"></div>
 
 <script>
-function onScanSuccess(decodedText, decodedResult) {
-    document.getElementById("result").innerHTML =
-        "✅ Hasil: <br><b>" + decodedText + "</b>";
-
-    // contoh kalau mau redirect ke halaman PNR
-    if(decodedText.length === 6){
-        window.location.href = "index.html?pnr=" + decodedText;
-    }
+function onScanSuccess(decodedText) {
+    // pindah ke halaman utama + isi PNR
+    window.location.href = "index.html?pnr=" + decodedText;
 }
 
-function onScanError(errorMessage) {
-    // biarin saja (error scan normal)
+function onScanError(error) {
+    // optional (biarin kosong juga boleh)
 }
 
-let scanner = new Html5QrcodeScanner(
-    "reader",
-    { fps: 10, qrbox: 250 }
-);
+const scanner = new Html5QrcodeScanner("reader", {
+    fps: 10,
+    qrbox: 250
+});
 
 scanner.render(onScanSuccess, onScanError);
 </script>
