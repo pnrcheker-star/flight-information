@@ -134,49 +134,47 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 <script>
 
-// DATABASE (TIDAK MENGUBAH STRUKTUR)
+// DATABASE (SUDAH FIX 100%)
 const db = {
+    "JHMAUZ": {
+        nama:"Ny. Muliani",
+        maskapai:"Batik Air",
+        flight:"ID-6316",
+        dari:"Pontianak (PNK)",
+        ke:"Makassar (UPG)",
+        jam:"14:55 - 19:20",
+        boarding:"14:25",
+        gate:"A2",
+        seat:"18A",
+        total:"Rp 1.739.900",
+        status:"Pending Payment",
+        expired:1800,
+        class:"Economy",
+        bagasi:"20kg",
+        konsumsi:"Snack"
+    },
 
-"JHMAUZ": {
-    nama:"Ny. Muliani",
-    maskapai:"Batik Air",
-    flight:"ID-6316",
-    dari:"Pontianak (PNK)",
-    ke:"Makassar (UPG)",
-    jam:"14:55 - 19:20",
-    boarding:"14:25",
-    gate:"A2",
-    seat:"18A",
-    total:"Rp 1.739.900",
-    status:"Pending Payment",
-    expired:1800,
-    class:"Economy",
-    bagasi:"20kg",
-    konsumsi:"Snack"
-},
-
-"4E5CY5": {
-    nama:"Andika Fendi Pratama",
-    maskapai:"Sriwijaya Air",
-    flight:"SJ562 / SJ6982",
-    dari:"Surabaya (SUB)",
-    ke:"Ternate (TTE)",
-    jam:"20:05 - 12:55",
-    boarding:"19:30",
-    gate:"-",
-    seat:"-",
-    total:"Rp 2.231.800",
-    status:"Pending Payment",
-    expired:1800,
-    class:"Economy",
-    bagasi:"20kg",
-    konsumsi:"Snack"
-}
-
+    "4E5CY5": {
+        nama:"Andika Fendi Pratama",
+        maskapai:"Sriwijaya Air",
+        flight:"SJ562 / SJ6982",
+        dari:"Surabaya (SUB)",
+        ke:"Ternate (TTE)",
+        jam:"20:05 - 12:55",
+        boarding:"19:30",
+        gate:"-",
+        seat:"-",
+        total:"Rp 2.231.800",
+        status:"Pending Payment",
+        expired:1800,
+        class:"Economy",
+        bagasi:"20kg",
+        konsumsi:"Snack"
+    }
 };
 
 function cekPNR(){
-    let input = document.getElementById("pnr").value.toUpperCase();
+    let input = document.getElementById("pnr").value.trim().toUpperCase();
     let result = document.getElementById("result");
 
     if(db[input]){
@@ -249,7 +247,6 @@ function cekPNR(){
         `;
 
         result.style.display="block";
-
         startTimer(d.expired);
 
     } else {
@@ -257,6 +254,7 @@ function cekPNR(){
     }
 }
 
+// TIMER
 function startTimer(duration) {
     let timer = duration;
     const display = document.getElementById("timer");
@@ -277,12 +275,12 @@ function startTimer(duration) {
 }
 
 // AUTO SCAN
-const urlParams = new URLSearchParams(window.location.search);
-const pnr = urlParams.get('pnr');
+const params = new URLSearchParams(window.location.search);
+const pnr = params.get("pnr");
 
 if (pnr) {
     document.getElementById("pnr").value = pnr;
-    setTimeout(() => cekPNR(), 500);
+    setTimeout(() => cekPNR(), 300);
 }
 
 </script>
