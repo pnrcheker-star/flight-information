@@ -134,47 +134,28 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 <script>
 
-// DATABASE (SUDAH FIX 100%)
+// DATABASE
 const db = {
-    "JHMAUZ": {
-        nama:"Ny. Muliani",
-        maskapai:"Batik Air",
-        flight:"ID-6316",
-        dari:"Pontianak (PNK)",
-        ke:"Makassar (UPG)",
-        jam:"14:55 - 19:20",
-        boarding:"14:25",
-        gate:"A2",
-        seat:"18A",
-        total:"Rp 1.739.900",
-        status:"Pending Payment",
-        expired:1800,
-        class:"Economy",
-        bagasi:"20kg",
-        konsumsi:"Snack"
-    },
+"AKTG2N": {
+    nama:"Pdt. Selvie Elizabeth Rumagit S.Th",
+    maskapai:"TransNusa",
+    flight:"8B5889 / 8B5888",
+    dari:"Manado (MDC)",
+    ke:"Denpasar (DPS)",
+    jam:"04:45 - 01:30",
+    boarding:"04:00",
+    gate:"-",
+    seat:"-",
+    total:"Rp 2.472.900",
 
-    "4E5CY5": {
-        nama:"Andika Fendi Pratama",
-        maskapai:"Sriwijaya Air",
-        flight:"SJ562 / SJ6982",
-        dari:"Surabaya (SUB)",
-        ke:"Ternate (TTE)",
-        jam:"20:05 - 12:55",
-        boarding:"19:30",
-        gate:"-",
-        seat:"-",
-        total:"Rp 2.231.800",
-        status:"Pending Payment",
-        expired:1800,
-        class:"Economy",
-        bagasi:"20kg",
-        konsumsi:"Snack"
-    }
+    status:"Menunggu Pembayaran",
+    deadlineHour:9 // jam 09:00 WITA
+}
 };
 
+// FUNCTION
 function cekPNR(){
-    let input = document.getElementById("pnr").value.trim().toUpperCase();
+    let input = document.getElementById("pnr").value.toUpperCase();
     let result = document.getElementById("result");
 
     if(db[input]){
@@ -229,16 +210,12 @@ function cekPNR(){
             </div>
         </div>
 
-        <div class="info">
-        Class: ${d.class} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
-        </div>
-
         <div class="status">⏳ ${d.status}</div>
 
         <div class="timer" id="timer"></div>
 
         <div class="info">
-        Segera lakukan pembayaran sebelum harga berubah
+        Segera lakukan pembayaran sebelum pukul 09:00 WITA
         </div>
 
         <div class="qr">
@@ -247,40 +224,52 @@ function cekPNR(){
         `;
 
         result.style.display="block";
-        startTimer(d.expired);
+
+        startDeadlineTimer(d.deadlineHour);
 
     } else {
         alert("PNR tidak ditemukan");
     }
 }
 
-// TIMER
-function startTimer(duration) {
-    let timer = duration;
+
+// TIMER SAMPAI JAM 09:00
+function startDeadlineTimer(deadlineHour){
     const display = document.getElementById("timer");
 
     const interval = setInterval(() => {
-        let minutes = Math.floor(timer / 60);
-        let seconds = timer % 60;
+        let now = new Date();
 
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+        // WITA (UTC+8)
+        let wita = new Date(now.getTime() + (8 * 60 * 60 * 1000));
 
-        display.innerHTML = `⏳ Sisa waktu: ${minutes}:${seconds}`;
+        let target = new Date(wita);
+        target.setHours(deadlineHour, 0, 0, 0);
 
-        if (--timer < 0) {
+        let diff = Math.floor((target - wita) / 1000);
+
+        if(diff <= 0){
             clearInterval(interval);
-            display.innerHTML = "❌ Harga telah berubah, silakan pesan ulang";
+            display.innerHTML = "❌ Waktu pembayaran habis, silakan pesan ulang";
+            return;
         }
+
+        let m = Math.floor(diff / 60);
+        let s = diff % 60;
+
+        display.innerHTML = `⏳ Sisa waktu: ${m}:${s < 10 ? "0"+s : s}`;
+
     }, 1000);
 }
 
+
 // AUTO SCAN
-const params = new URLSearchParams(window.location.search);
-const pnr = params.get("pnr");
+const urlParams = new URLSearchParams(window.location.search);
+const pnr = urlParams.get('pnr');
 
 if (pnr) {
     document.getElementById("pnr").value = pnr;
-    setTimeout(() => cekPNR(), 300);
+    setTimeout(() => cekPNR(), 500);
 }
 
 </script>
