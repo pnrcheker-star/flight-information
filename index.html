@@ -13,7 +13,6 @@ body {
     color:#fff;
 }
 
-/* BOX */
 .box {
     margin:20px;
     padding:20px;
@@ -35,7 +34,6 @@ body {
     margin-bottom:20px;
 }
 
-/* INPUT */
 input {
     width:100%;
     padding:15px;
@@ -46,7 +44,6 @@ input {
     margin-bottom:15px;
 }
 
-/* BUTTON */
 button {
     width:100%;
     padding:15px;
@@ -58,7 +55,6 @@ button {
     font-size:16px;
 }
 
-/* RESULT */
 .result {
     margin-top:20px;
     display:none;
@@ -67,7 +63,6 @@ button {
     padding:20px;
 }
 
-/* GRID */
 .row {
     display:flex;
     justify-content:space-between;
@@ -83,14 +78,12 @@ button {
     font-weight:bold;
 }
 
-/* ROUTE */
 .route {
     text-align:center;
     margin:15px 0;
     font-size:18px;
 }
 
-/* STATUS */
 .status {
     margin-top:15px;
     background:#FFD600;
@@ -101,7 +94,6 @@ button {
     font-weight:bold;
 }
 
-/* TIMER */
 .timer {
     margin-top:10px;
     text-align:center;
@@ -109,14 +101,12 @@ button {
     font-size:14px;
 }
 
-/* INFO */
 .info {
     text-align:center;
     font-size:13px;
     color:#aaa;
 }
 
-/* QR */
 .qr {
     text-align:center;
     margin-top:15px;
@@ -144,8 +134,9 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 <script>
 
-// DATABASE
+// DATABASE (TIDAK MENGUBAH STRUKTUR)
 const db = {
+
 "JHMAUZ": {
     nama:"Ny. Muliani",
     maskapai:"Batik Air",
@@ -157,17 +148,33 @@ const db = {
     gate:"A2",
     seat:"18A",
     total:"Rp 1.739.900",
-
     status:"Pending Payment",
-    expired:1800, // 30 menit
+    expired:1800,
+    class:"Economy",
+    bagasi:"20kg",
+    konsumsi:"Snack"
+},
 
+"4E5CY5": {
+    nama:"Andika Fendi Pratama",
+    maskapai:"Sriwijaya Air",
+    flight:"SJ562 / SJ6982",
+    dari:"Surabaya (SUB)",
+    ke:"Ternate (TTE)",
+    jam:"20:05 - 12:55",
+    boarding:"19:30",
+    gate:"-",
+    seat:"-",
+    total:"Rp 2.231.800",
+    status:"Pending Payment",
+    expired:1800,
     class:"Economy",
     bagasi:"20kg",
     konsumsi:"Snack"
 }
+
 };
 
-// FUNCTION
 function cekPNR(){
     let input = document.getElementById("pnr").value.toUpperCase();
     let result = document.getElementById("result");
@@ -176,7 +183,6 @@ function cekPNR(){
         let d = db[input];
 
         result.innerHTML = `
-        
         <div class="row">
             <div>
                 <div class="label">Nama</div>
@@ -251,8 +257,6 @@ function cekPNR(){
     }
 }
 
-
-// TIMER
 function startTimer(duration) {
     let timer = duration;
     const display = document.getElementById("timer");
@@ -271,7 +275,6 @@ function startTimer(duration) {
         }
     }, 1000);
 }
-
 
 // AUTO SCAN
 const urlParams = new URLSearchParams(window.location.search);
