@@ -24,92 +24,50 @@ body {
 .title {
     text-align:center;
     font-size:22px;
-    margin-bottom:10px;
 }
 
-.desc {
-    text-align:center;
-    color:#aaa;
-    font-size:14px;
-    margin-bottom:20px;
-}
-
-input {
+input, button {
     width:100%;
     padding:15px;
     border-radius:12px;
     border:none;
-    background:#222;
-    color:#fff;
-    margin-bottom:15px;
+    margin-top:10px;
 }
 
 button {
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
     background:red;
     color:white;
     font-weight:bold;
-    font-size:16px;
 }
 
 .result {
     margin-top:20px;
     display:none;
     background:#1a1a1a;
-    border-radius:20px;
     padding:20px;
-}
-
-.row {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-}
-
-.label {
-    font-size:12px;
-    color:#aaa;
-}
-
-.value {
-    font-weight:bold;
-}
-
-.route {
-    text-align:center;
-    margin:15px 0;
-    font-size:18px;
-}
-
-.status {
-    margin-top:15px;
-    background:#FFD600;
-    color:#000;
-    text-align:center;
-    padding:12px;
     border-radius:20px;
-    font-weight:bold;
+}
+
+.passenger {
+    background:#222;
+    padding:10px;
+    margin-top:10px;
+    border-radius:10px;
 }
 
 .timer {
     margin-top:10px;
     text-align:center;
     color:#ff3b30;
-    font-size:14px;
 }
 
-.info {
+.status {
+    background:#FFD600;
+    color:#000;
+    padding:10px;
+    border-radius:10px;
     text-align:center;
-    font-size:13px;
-    color:#aaa;
-}
-
-.qr {
-    text-align:center;
-    margin-top:15px;
+    margin-top:10px;
 }
 </style>
 </head>
@@ -120,11 +78,6 @@ button {
 
 <div class="title">✈️ Flight PNR Checker</div>
 
-<p class="desc">
-Cek status penerbangan Anda dengan mudah menggunakan kode PNR. 
-Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
-</p>
-
 <input type="text" id="pnr" placeholder="Masukkan kode PNR">
 <button onclick="cekPNR()">Cek Status</button>
 
@@ -134,55 +87,43 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 <script>
 
-// DATABASE (SUDAH DIISI)
+// DATABASE BARU (ARRAY PENUMPANG)
 const db = {
 
-"AKTG2N": {
-    nama:"Pdt. Selvie Elizabeth Rumagit S.Th",
-    maskapai:"TransNusa",
-    flight:"8B5889 / 8B5888",
-    dari:"Manado (MDC)",
+"GIA7KP": {
+    maskapai:"Garuda Indonesia",
+    flight:"GA 223 / GA 224",
+    dari:"Solo (SOC)",
     ke:"Denpasar (DPS)",
-    jam:"04:45 - 01:30",
-    boarding:"04:00",
-    gate:"-",
-    seat:"-",
-    total:"Rp 2.472.900",
+    jam:"08:00 - 10:40",
+    total:"Rp 1.300.001 / pax",
     status:"Menunggu Pembayaran",
-    deadlineHour:9
+    deadlineHour:9,
+
+    penumpang:[
+        {nama:"Rudyanto Gunadi", title:"MR", seat:"12A"},
+        {nama:"Sylvia Suyani", title:"MRS", seat:"12B"}
+    ]
 },
 
 "JHMAUZ": {
-    nama:"Ny. Muliani / Tn. Budi Santoso",
     maskapai:"Batik Air",
     flight:"ID-6316",
     dari:"Pontianak (PNK)",
     ke:"Makassar (UPG)",
     jam:"14:55 - 19:20",
-    boarding:"14:10",
-    gate:"A2",
-    seat:"18A / 18B",
     total:"Rp 3.479.800",
     status:"Menunggu Pembayaran",
-    deadlineHour:9
-},
+    deadlineHour:9,
 
-"GRP4601": {
-    nama:"Group 46 Pax - Golden Travel Rama",
-    maskapai:"Citilink",
-    flight:"QG640",
-    dari:"Jakarta (CGK)",
-    ke:"Lombok (LOP)",
-    jam:"08:40 - 11:40",
-    boarding:"08:00",
-    gate:"-",
-    seat:"Group Seating",
-    total:"Rp 1.180.570 - Rp 1.327.800 / pax",
-    status:"Pengajuan Group",
-    deadlineHour:17
+    penumpang:[
+        {nama:"Muliani", title:"MRS", seat:"18A"},
+        {nama:"Budi Santoso", title:"MR", seat:"18B"}
+    ]
 }
 
 };
+
 
 // FUNCTION
 function cekPNR(){
@@ -192,101 +133,61 @@ function cekPNR(){
     if(db[input]){
         let d = db[input];
 
+        let penumpangHTML = "";
+        d.penumpang.forEach(p => {
+            penumpangHTML += `
+            <div class="passenger">
+                ${p.nama} (${p.title}) - Seat ${p.seat}
+            </div>`;
+        });
+
         result.innerHTML = `
-        <div class="row">
-            <div>
-                <div class="label">Nama</div>
-                <div class="value">${d.nama}</div>
-            </div>
-            <div>
-                <div class="label">Maskapai</div>
-                <div class="value">${d.maskapai}</div>
-            </div>
-        </div>
+        <div><b>${d.maskapai}</b></div>
+        <div>${d.dari} ✈ ${d.ke}</div>
+        <div>${d.flight}</div>
+        <div>${d.jam}</div>
 
-        <div class="route">
-            ${d.dari} ✈ ${d.ke}
-        </div>
+        <h3>Penumpang:</h3>
+        ${penumpangHTML}
 
-        <div class="row">
-            <div>
-                <div class="label">Flight</div>
-                <div class="value">${d.flight}</div>
-            </div>
-            <div>
-                <div class="label">Jam</div>
-                <div class="value">${d.jam}</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="label">Gate</div>
-                <div class="value">${d.gate}</div>
-            </div>
-            <div>
-                <div class="label">Seat</div>
-                <div class="value">${d.seat}</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="label">Boarding</div>
-                <div class="value">${d.boarding}</div>
-            </div>
-            <div>
-                <div class="label">Total</div>
-                <div class="value">${d.total}</div>
-            </div>
-        </div>
-
-        <div class="status">⏳ ${d.status}</div>
-
+        <div class="status">${d.status}</div>
         <div class="timer" id="timer"></div>
-
-        <div class="info">
-        Segera lakukan pembayaran sebelum batas waktu
-        </div>
-
-        <div class="qr">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${input}">
+        <div style="text-align:center;margin-top:10px;">
+        Total: ${d.total}
         </div>
         `;
 
         result.style.display="block";
-
-        startDeadlineTimer(d.deadlineHour);
+        startTimer(d.deadlineHour);
 
     } else {
         alert("PNR tidak ditemukan");
     }
 }
 
+
 // TIMER
-function startDeadlineTimer(deadlineHour){
+function startTimer(hour){
     const display = document.getElementById("timer");
 
     const interval = setInterval(() => {
         let now = new Date();
-        let wita = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-        let target = new Date(wita);
-        target.setHours(deadlineHour, 0, 0, 0);
+        let target = new Date();
+        target.setHours(hour,0,0,0);
 
-        let diff = Math.floor((target - wita) / 1000);
+        let diff = (target - now)/1000;
 
         if(diff <= 0){
             clearInterval(interval);
-            display.innerHTML = "❌ Waktu pembayaran habis";
+            display.innerHTML = "❌ Waktu habis";
             return;
         }
 
-        let m = Math.floor(diff / 60);
-        let s = diff % 60;
+        let m = Math.floor(diff/60);
+        let s = Math.floor(diff%60);
 
-        display.innerHTML = `⏳ Sisa waktu: ${m}:${s < 10 ? "0"+s : s}`;
-
-    }, 1000);
+        display.innerHTML = `⏳ Sisa waktu: ${m}:${s<10?"0"+s:s}`;
+    },1000);
 }
 
 </script>
