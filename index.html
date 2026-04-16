@@ -1,288 +1,142 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight PNR Checker</title>
-
-<style>
-body {
-    margin:0;
-    font-family:Arial;
-    background:#000;
-    color:#fff;
-}
-
-/* BOX */
-.box {
-    margin:20px;
-    padding:20px;
-    border-radius:25px;
-    background:#111;
-    box-shadow:0 0 30px rgba(255,0,0,0.2);
-}
-
-.title {
-    text-align:center;
-    font-size:22px;
-    margin-bottom:10px;
-}
-
-.desc {
-    text-align:center;
-    color:#aaa;
-    font-size:14px;
-    margin-bottom:20px;
-}
-
-/* INPUT */
-input {
-    width:100%;
-    padding:15px;
-    border-radius:12px;
-    border:none;
-    background:#222;
-    color:#fff;
-    margin-bottom:15px;
-}
-
-/* BUTTON */
-button {
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:red;
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-}
-
-/* RESULT */
-.result {
-    margin-top:20px;
-    display:none;
-    background:#1a1a1a;
-    border-radius:20px;
-    padding:20px;
-}
-
-/* GRID */
-.row {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-}
-
-.label {
-    font-size:12px;
-    color:#aaa;
-}
-
-.value {
-    font-weight:bold;
-}
-
-/* ROUTE */
-.route {
-    text-align:center;
-    margin:15px 0;
-    font-size:18px;
-}
-
-/* STATUS */
-.status {
-    margin-top:15px;
-    background:#FFD600;
-    color:#000;
-    text-align:center;
-    padding:12px;
-    border-radius:20px;
-    font-weight:bold;
-}
-
-/* TIMER */
-.timer {
-    margin-top:10px;
-    text-align:center;
-    color:#ff3b30;
-    font-size:14px;
-}
-
-/* INFO */
-.info {
-    text-align:center;
-    font-size:13px;
-    color:#aaa;
-}
-
-/* QR */
-.qr {
-    text-align:center;
-    margin-top:15px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-
-<div class="title">✈️ Flight PNR Checker</div>
-
-<p class="desc">
-Cek status penerbangan Anda dengan mudah menggunakan kode PNR. 
-Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
-</p>
-
-<input type="text" id="pnr" placeholder="Masukkan kode PNR">
-<button onclick="cekPNR()">Cek Status</button>
-
-<div class="result" id="result"></div>
-
-</div>
-
-<script>
-
-// DATABASE
-const db = {
-"JHMAUZ": {
-    nama:"Ny. Muliani",
-    maskapai:"Batik Air",
-    flight:"ID-6316",
-    dari:"Pontianak (PNK)",
-    ke:"Makassar (UPG)",
-    jam:"14:55 - 19:20",
-    boarding:"14:25",
-    gate:"A2",
-    seat:"18A",
-    total:"Rp 1.739.900",
-
-    status:"Pending Payment",
-    expired:1800, // 30 menit
-
-    class:"Economy",
-    bagasi:"20kg",
-    konsumsi:"Snack"
-}
-};
-
-// FUNCTION
-function cekPNR(){
-    let input = document.getElementById("pnr").value.toUpperCase();
-    let result = document.getElementById("result");
-
-    if(db[input]){
-        let d = db[input];
-
-        result.innerHTML = `
-        
-        <div class="row">
-            <div>
-                <div class="label">Nama</div>
-                <div class="value">${d.nama}</div>
-            </div>
-            <div>
-                <div class="label">Maskapai</div>
-                <div class="value">${d.maskapai}</div>
-            </div>
-        </div>
-
-        <div class="route">
-            ${d.dari} ✈ ${d.ke}
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="label">Flight</div>
-                <div class="value">${d.flight}</div>
-            </div>
-            <div>
-                <div class="label">Jam</div>
-                <div class="value">${d.jam}</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="label">Gate</div>
-                <div class="value">${d.gate}</div>
-            </div>
-            <div>
-                <div class="label">Seat</div>
-                <div class="value">${d.seat}</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div>
-                <div class="label">Boarding</div>
-                <div class="value">${d.boarding}</div>
-            </div>
-            <div>
-                <div class="label">Total</div>
-                <div class="value">${d.total}</div>
-            </div>
-        </div>
-
-        <div class="info">
-        Class: ${d.class} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
-        </div>
-
-        <div class="status">⏳ ${d.status}</div>
-
-        <div class="timer" id="timer"></div>
-
-        <div class="info">
-        Segera lakukan pembayaran sebelum harga berubah
-        </div>
-
-        <div class="qr">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${input}">
-        </div>
-        `;
-
-        result.style.display="block";
-
-        startTimer(d.expired);
-
-    } else {
-        alert("PNR tidak ditemukan");
-    }
-}
-
-
-// TIMER
-function startTimer(duration) {
-    let timer = duration;
-    const display = document.getElementById("timer");
-
-    const interval = setInterval(() => {
-        let minutes = Math.floor(timer / 60);
-        let seconds = timer % 60;
-
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.innerHTML = `⏳ Sisa waktu: ${minutes}:${seconds}`;
-
-        if (--timer < 0) {
-            clearInterval(interval);
-            display.innerHTML = "❌ Harga telah berubah, silakan pesan ulang";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight PNR Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#121212',
+                        card: '#1E1E1E',
+                        primary: '#E53935',
+                        warning: '#FBC02D',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
         }
-    }, 1000);
-}
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-white font-sans min-h-screen flex flex-col items-center p-4">
 
+    <div class="w-full max-w-md bg-card rounded-3xl shadow-2xl p-6 space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center space-y-3">
+            <h1 class="text-3xl font-bold flex items-center justify-center gap-2">
+                <i class="fas fa-plane-departure text-blue-400"></i>
+                Flight PNR Checker
+            </h1>
+            <p class="text-gray-400 text-base leading-relaxed">
+                Cek status penerbangan Anda dengan mudah menggunakan kode PNR. Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
+            </p>
+        </div>
 
-// AUTO SCAN
-const urlParams = new URLSearchParams(window.location.search);
-const pnr = urlParams.get('pnr');
+        <!-- PNR Input -->
+        <div class="bg-gray-800 rounded-xl p-4 text-center">
+            <p class="text-xl font-mono font-bold tracking-wider">JHMAUZ</p>
+        </div>
 
-if (pnr) {
-    document.getElementById("pnr").value = pnr;
-    setTimeout(() => cekPNR(), 500);
-}
+        <!-- Check Status Button -->
+        <button class="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl text-xl transition-all duration-300 shadow-lg">
+            Cek Status
+        </button>
 
-</script>
+        <!-- Flight Details -->
+        <div class="space-y-4 border-t border-gray-700 pt-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-400 text-sm">Nama</p>
+                    <p class="text-xl font-bold">Ny. Muliani</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-400 text-sm">Maskapai</p>
+                    <p class="text-xl font-bold">Batik Air</p>
+                </div>
+            </div>
+
+            <div class="text-center text-2xl font-bold py-2">
+                Pontianak (PNK) <i class="fas fa-plane-arrival text-blue-400 mx-2"></i> Makassar (UPG)
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-gray-400 text-sm">Flight</p>
+                    <p class="text-xl font-bold">ID-6316</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Jam</p>
+                    <p class="text-xl font-bold">14:55 - 19:20</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Gate</p>
+                    <p class="text-xl font-bold">A2</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Seat</p>
+                    <p class="text-xl font-bold">18A</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Boarding</p>
+                    <p class="text-xl font-bold">14:25</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Total</p>
+                    <p class="text-xl font-bold">Rp 1.739.900</p>
+                </div>
+            </div>
+
+            <div class="text-center text-gray-300 pt-2">
+                Class: Economy | Bagasi: 20kg | Konsumsi: Snack
+            </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="bg-warning text-dark font-bold py-3 rounded-xl text-center text-xl flex items-center justify-center gap-2">
+            <i class="fas fa-hourglass-half"></i>
+            Pending Payment
+        </div>
+
+        <!-- Warning Message -->
+        <div class="text-center space-y-2">
+            <p class="text-red-500 font-medium">
+                <i class="fas fa-times-circle"></i> Harga telah berubah, silakan pesan ulang
+            </p>
+            <p class="text-gray-400">
+                Segera lakukan pembayaran sebelum harga berubah
+            </p>
+        </div>
+
+        <!-- QR Code Placeholder -->
+        <div class="flex justify-center py-4">
+            <div class="bg-white p-2 rounded-lg">
+                <div class="w-48 h-48 bg-black grid grid-cols-8 grid-rows-8 gap-0.5">
+                    <!-- Simplified QR pattern -->
+                    <div class="bg-white col-span-3 row-span-3"></div>
+                    <div class="bg-white col-start-6 col-span-3 row-span-3"></div>
+                    <div class="bg-white col-span-3 row-start-6 row-span-3"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 </body>
 </html>
