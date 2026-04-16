@@ -134,8 +134,9 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 <script>
 
-// DATABASE
+// DATABASE (SUDAH DIISI)
 const db = {
+
 "AKTG2N": {
     nama:"Pdt. Selvie Elizabeth Rumagit S.Th",
     maskapai:"TransNusa",
@@ -147,10 +148,40 @@ const db = {
     gate:"-",
     seat:"-",
     total:"Rp 2.472.900",
-
     status:"Menunggu Pembayaran",
-    deadlineHour:9 // jam 09:00 WITA
+    deadlineHour:9
+},
+
+"JHMAUZ": {
+    nama:"Ny. Muliani / Tn. Budi Santoso",
+    maskapai:"Batik Air",
+    flight:"ID-6316",
+    dari:"Pontianak (PNK)",
+    ke:"Makassar (UPG)",
+    jam:"14:55 - 19:20",
+    boarding:"14:10",
+    gate:"A2",
+    seat:"18A / 18B",
+    total:"Rp 3.479.800",
+    status:"Menunggu Pembayaran",
+    deadlineHour:9
+},
+
+"GRP4601": {
+    nama:"Group 46 Pax - Golden Travel Rama",
+    maskapai:"Citilink",
+    flight:"QG640",
+    dari:"Jakarta (CGK)",
+    ke:"Lombok (LOP)",
+    jam:"08:40 - 11:40",
+    boarding:"08:00",
+    gate:"-",
+    seat:"Group Seating",
+    total:"Rp 1.180.570 - Rp 1.327.800 / pax",
+    status:"Pengajuan Group",
+    deadlineHour:17
 }
+
 };
 
 // FUNCTION
@@ -215,7 +246,7 @@ function cekPNR(){
         <div class="timer" id="timer"></div>
 
         <div class="info">
-        Segera lakukan pembayaran sebelum pukul 09:00 WITA
+        Segera lakukan pembayaran sebelum batas waktu
         </div>
 
         <div class="qr">
@@ -232,17 +263,13 @@ function cekPNR(){
     }
 }
 
-
-// TIMER SAMPAI JAM 09:00
+// TIMER
 function startDeadlineTimer(deadlineHour){
     const display = document.getElementById("timer");
 
     const interval = setInterval(() => {
         let now = new Date();
-
-        // WITA (UTC+8)
         let wita = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-
         let target = new Date(wita);
         target.setHours(deadlineHour, 0, 0, 0);
 
@@ -250,7 +277,7 @@ function startDeadlineTimer(deadlineHour){
 
         if(diff <= 0){
             clearInterval(interval);
-            display.innerHTML = "❌ Waktu pembayaran habis, silakan pesan ulang";
+            display.innerHTML = "❌ Waktu pembayaran habis";
             return;
         }
 
@@ -260,16 +287,6 @@ function startDeadlineTimer(deadlineHour){
         display.innerHTML = `⏳ Sisa waktu: ${m}:${s < 10 ? "0"+s : s}`;
 
     }, 1000);
-}
-
-
-// AUTO SCAN
-const urlParams = new URLSearchParams(window.location.search);
-const pnr = urlParams.get('pnr');
-
-if (pnr) {
-    document.getElementById("pnr").value = pnr;
-    setTimeout(() => cekPNR(), 500);
 }
 
 </script>
