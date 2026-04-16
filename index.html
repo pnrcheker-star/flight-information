@@ -1,142 +1,232 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight PNR Checker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        dark: '#121212',
-                        card: '#1E1E1E',
-                        primary: '#E53935',
-                        warning: '#FBC02D',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .content-auto {
-                content-visibility: auto;
-            }
-            .text-shadow {
-                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNR Checker</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: black;
+  color: white;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #1c1c1e;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+input, button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+}
+
+input {
+  background: #333;
+  color: white;
+}
+
+button {
+  background: red;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.status {
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.timer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 20px;
+  color: #00ffcc;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+
 </head>
-<body class="bg-dark text-white font-sans min-h-screen flex flex-col items-center p-4">
+<body>
 
-    <div class="w-full max-w-md bg-card rounded-3xl shadow-2xl p-6 space-y-6">
-        
-        <!-- Header -->
-        <div class="text-center space-y-3">
-            <h1 class="text-3xl font-bold flex items-center justify-center gap-2">
-                <i class="fas fa-plane-departure text-blue-400"></i>
-                Flight PNR Checker
-            </h1>
-            <p class="text-gray-400 text-base leading-relaxed">
-                Cek status penerbangan Anda dengan mudah menggunakan kode PNR. Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
-            </p>
-        </div>
+<div class="container">
 
-        <!-- PNR Input -->
-        <div class="bg-gray-800 rounded-xl p-4 text-center">
-            <p class="text-xl font-mono font-bold tracking-wider">JHMAUZ</p>
-        </div>
+  <h1>Flight PNR Checker</h1>
 
-        <!-- Check Status Button -->
-        <button class="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl text-xl transition-all duration-300 shadow-lg">
-            Cek Status
-        </button>
+  <div class="card">
+    <h2>✈️ Flight PNR Checker</h2>
+    <p>Test PNR:</p>
+    <p><b>PNR123456</b> (Pending)</p>
+    <p><b>4E5CY5</b> (Issued)</p>
 
-        <!-- Flight Details -->
-        <div class="space-y-4 border-t border-gray-700 pt-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-gray-400 text-sm">Nama</p>
-                    <p class="text-xl font-bold">Ny. Muliani</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-gray-400 text-sm">Maskapai</p>
-                    <p class="text-xl font-bold">Batik Air</p>
-                </div>
-            </div>
+    <input type="text" id="pnr" placeholder="Masukkan kode PNR">
+    <button onclick="cekPNR()">Cek Status</button>
+  </div>
 
-            <div class="text-center text-2xl font-bold py-2">
-                Pontianak (PNK) <i class="fas fa-plane-arrival text-blue-400 mx-2"></i> Makassar (UPG)
-            </div>
+  <div id="result" class="card hidden">
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-gray-400 text-sm">Flight</p>
-                    <p class="text-xl font-bold">ID-6316</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Jam</p>
-                    <p class="text-xl font-bold">14:55 - 19:20</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Gate</p>
-                    <p class="text-xl font-bold">A2</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Seat</p>
-                    <p class="text-xl font-bold">18A</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Boarding</p>
-                    <p class="text-xl font-bold">14:25</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Total</p>
-                    <p class="text-xl font-bold">Rp 1.739.900</p>
-                </div>
-            </div>
-
-            <div class="text-center text-gray-300 pt-2">
-                Class: Economy | Bagasi: 20kg | Konsumsi: Snack
-            </div>
-        </div>
-
-        <!-- Status Badge -->
-        <div class="bg-warning text-dark font-bold py-3 rounded-xl text-center text-xl flex items-center justify-center gap-2">
-            <i class="fas fa-hourglass-half"></i>
-            Pending Payment
-        </div>
-
-        <!-- Warning Message -->
-        <div class="text-center space-y-2">
-            <p class="text-red-500 font-medium">
-                <i class="fas fa-times-circle"></i> Harga telah berubah, silakan pesan ulang
-            </p>
-            <p class="text-gray-400">
-                Segera lakukan pembayaran sebelum harga berubah
-            </p>
-        </div>
-
-        <!-- QR Code Placeholder -->
-        <div class="flex justify-center py-4">
-            <div class="bg-white p-2 rounded-lg">
-                <div class="w-48 h-48 bg-black grid grid-cols-8 grid-rows-8 gap-0.5">
-                    <!-- Simplified QR pattern -->
-                    <div class="bg-white col-span-3 row-span-3"></div>
-                    <div class="bg-white col-start-6 col-span-3 row-span-3"></div>
-                    <div class="bg-white col-span-3 row-start-6 row-span-3"></div>
-                </div>
-            </div>
-        </div>
-
+    <div class="grid">
+      <div><span>Nama</span><b id="nama"></b></div>
+      <div><span>Maskapai</span><b id="maskapai"></b></div>
     </div>
+
+    <h3 id="route"></h3>
+
+    <div class="grid">
+      <div><span>Flight</span><b id="flight"></b></div>
+      <div><span>Jam</span><b id="jam"></b></div>
+      <div><span>Gate</span><b id="gate"></b></div>
+      <div><span>Seat</span><b id="seat"></b></div>
+      <div><span>Boarding</span><b id="boarding"></b></div>
+      <div><span>Total</span><b id="total"></b></div>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="timer" class="timer"></div>
+
+  </div>
+
+</div>
+
+<script>
+let interval;
+
+// ================= DATA =================
+const database = {
+  "PNR123456": {
+    nama: "Ny. Muliani",
+    maskapai: "Batik Air",
+    route: "Pontianak (PNK) ✈ Makassar (UPG)",
+    flight: "ID-6316",
+    jam: "14:55 - 19:20",
+    gate: "A2",
+    seat: "18A",
+    boarding: "14:25",
+    total: "Rp 1.739.900",
+    status: "pending"
+  },
+
+  "4E5CY5": {
+    nama: "Andika Fendi Pratama",
+    maskapai: "Sriwijaya Air",
+    route: "Surabaya (SUB) ✈ Ternate (TTE)",
+    flight: "SJ562 / SJ6982",
+    jam: "20:05 - 12:55 (+1 hari)",
+    gate: "-",
+    seat: "-",
+    boarding: "18:30",
+    total: "Rp 2.231.800",
+    status: "issued"
+  }
+};
+
+// ================= CEK PNR =================
+function cekPNR() {
+  const pnr = document.getElementById("pnr").value.trim();
+
+  if (!database[pnr]) {
+    alert("PNR tidak ditemukan");
+    return;
+  }
+
+  const data = database[pnr];
+
+  document.getElementById("result").classList.remove("hidden");
+
+  // isi data
+  document.getElementById("nama").innerText = data.nama;
+  document.getElementById("maskapai").innerText = data.maskapai;
+  document.getElementById("route").innerText = data.route;
+  document.getElementById("flight").innerText = data.flight;
+  document.getElementById("jam").innerText = data.jam;
+  document.getElementById("gate").innerText = data.gate;
+  document.getElementById("seat").innerText = data.seat;
+  document.getElementById("boarding").innerText = data.boarding;
+  document.getElementById("total").innerText = data.total;
+
+  clearInterval(interval);
+
+  // ================= STATUS =================
+  if (data.status === "issued") {
+    document.getElementById("status").innerText = "✅ ISSUED";
+    document.getElementById("status").style.background = "green";
+    document.getElementById("timer").style.display = "none";
+  } else {
+    document.getElementById("status").innerText = "⏳ Pending Payment";
+    document.getElementById("status").style.background = "gold";
+    document.getElementById("timer").style.display = "block";
+
+    startTimer(pnr);
+  }
+}
+
+// ================= TIMER =================
+function startTimer(pnr) {
+  let expiredAt = localStorage.getItem("expired_" + pnr);
+
+  if (!expiredAt) {
+    expiredAt = Date.now() + (30 * 60 * 1000);
+    localStorage.setItem("expired_" + pnr, expiredAt);
+  }
+
+  interval = setInterval(() => {
+    const remaining = expiredAt - Date.now();
+
+    if (remaining <= 0) {
+      document.getElementById("timer").innerText = "00:00";
+      document.getElementById("status").innerText = "❌ Expired";
+      document.getElementById("status").style.background = "red";
+      localStorage.removeItem("expired_" + pnr);
+      clearInterval(interval);
+      return;
+    }
+
+    const min = Math.floor(remaining / 60000);
+    const sec = Math.floor((remaining % 60000) / 1000);
+
+    document.getElementById("timer").innerText =
+      `${min}:${sec.toString().padStart(2, "0")}`;
+  }, 1000);
+}
+
+// ================= AUTO LOAD =================
+window.onload = function () {
+  for (let pnr in database) {
+    const expired = localStorage.getItem("expired_" + pnr);
+    if (expired) {
+      document.getElementById("pnr").value = pnr;
+      cekPNR();
+      break;
+    }
+  }
+};
+</script>
 
 </body>
 </html>
