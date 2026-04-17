@@ -13,7 +13,6 @@ body {
     color:#fff;
 }
 
-/* BOX */
 .box {
     margin:20px;
     padding:20px;
@@ -35,7 +34,6 @@ body {
     margin-bottom:20px;
 }
 
-/* INPUT */
 input {
     width:100%;
     padding:15px;
@@ -46,7 +44,6 @@ input {
     margin-bottom:15px;
 }
 
-/* BUTTON */
 button {
     width:100%;
     padding:15px;
@@ -58,7 +55,6 @@ button {
     font-size:16px;
 }
 
-/* RESULT */
 .result {
     margin-top:20px;
     display:none;
@@ -67,7 +63,6 @@ button {
     padding:20px;
 }
 
-/* GRID */
 .row {
     display:flex;
     justify-content:space-between;
@@ -83,14 +78,12 @@ button {
     font-weight:bold;
 }
 
-/* ROUTE */
 .route {
     text-align:center;
     margin:15px 0;
     font-size:18px;
 }
 
-/* STATUS */
 .status {
     margin-top:15px;
     background:#FFD600;
@@ -101,7 +94,6 @@ button {
     font-weight:bold;
 }
 
-/* TIMER */
 .timer {
     margin-top:10px;
     text-align:center;
@@ -109,14 +101,12 @@ button {
     font-size:14px;
 }
 
-/* INFO */
 .info {
     text-align:center;
     font-size:13px;
     color:#aaa;
 }
 
-/* QR */
 .qr {
     text-align:center;
     margin-top:15px;
@@ -131,8 +121,7 @@ button {
 <div class="title">✈️ Flight PNR Checker</div>
 
 <p class="desc">
-Cek status penerbangan Anda dengan mudah menggunakan kode PNR. 
-Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
+Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
 </p>
 
 <input type="text" id="pnr" placeholder="Masukkan kode PNR">
@@ -146,26 +135,45 @@ Data yang ditampilkan merupakan data resmi dari sistem penerbangan.
 
 // DATABASE
 const db = {
-"JHMAUZ": {
-    nama:"Ny. Muliani",
-    maskapai:"Batik Air",
-    flight:"ID-6316",
-    dari:"Pontianak (PNK)",
-    ke:"Makassar (UPG)",
-    jam:"14:55 - 19:20",
-    boarding:"14:25",
-    gate:"A2",
-    seat:"18A",
-    total:"Rp 1.739.900",
 
-    status:"Pending Payment",
-    expired:1800, // 30 menit
+"GT8M4K": {
+    nama:"GROUP BOOKING (13 PAX)",
+    maskapai:"Scoot + AirAsia",
+    flight:"TR + AK (Transit)",
+    dari:"Denpasar (DPS)",
+    ke:"Bangkok (BKK)",
+    jam:"14 - 17 Mei 2026",
+    boarding:"Check-in 2 Jam sebelum",
+    gate:"TBA",
+    seat:"Group Seat",
+    total:"Rp 39.230.100",
+
+    status:"⏳ MENUNGGU PEMBAYARAN",
+    expired:2820,
 
     class:"Economy",
-    bagasi:"20kg",
-    konsumsi:"Snack"
+    bagasi:"Cabin Only",
+    konsumsi:"Exclude",
+
+    passengers: [
+        {nama:"Ni Putu Ari Astiti Ningsih", eticket:"086-9182736450", scoot:"12A", airasia:"15A"},
+        {nama:"Ni Gusti Ayu Manik Dewi", eticket:"086-9182736451", scoot:"12B", airasia:"15B"},
+        {nama:"Anak Agung Ayu Prastiwi", eticket:"086-9182736452", scoot:"12C", airasia:"15C"},
+        {nama:"Desak Nyoman Jepun", eticket:"086-9182736453", scoot:"12D", airasia:"15D"},
+        {nama:"Dewa Ayu Sri Wedawati", eticket:"086-9182736454", scoot:"12E", airasia:"15E"},
+        {nama:"Gusti Nyoman Pusmiti", eticket:"086-9182736455", scoot:"12F", airasia:"15F"},
+        {nama:"Anak Agung Ari Dwi Antari", eticket:"086-9182736456", scoot:"13A", airasia:"16A"},
+        {nama:"Gusti Ayu Nyoman Nurianti", eticket:"086-9182736457", scoot:"13B", airasia:"16B"},
+        {nama:"Gusti Ayu Putri Parama Nanda", eticket:"086-9182736458", scoot:"13C", airasia:"16C"},
+        {nama:"Ni Putu Rusmini", eticket:"086-9182736459", scoot:"13D", airasia:"16D"},
+        {nama:"Gusti Ayu Putri Anjani", eticket:"086-9182736460", scoot:"13E", airasia:"16E"},
+        {nama:"Gusti Nyoman Merta", eticket:"086-9182736461", scoot:"13F", airasia:"16F"},
+        {nama:"Ni Ketut Suasti", eticket:"086-9182736462", scoot:"14A", airasia:"17A"}
+    ]
 }
+
 };
+
 
 // FUNCTION
 function cekPNR(){
@@ -175,82 +183,67 @@ function cekPNR(){
     if(db[input]){
         let d = db[input];
 
+        let paxList = "";
+        d.passengers.forEach((p,i)=>{
+            paxList += `
+            <div class="row">
+                <div>
+                    <div class="label">${i+1}. ${p.nama}</div>
+                    <div class="value">ETKT: ${p.eticket}</div>
+                </div>
+                <div>
+                    <div class="label">Seat</div>
+                    <div class="value">${p.scoot} / ${p.airasia}</div>
+                </div>
+            </div>`;
+        });
+
         result.innerHTML = `
-        
         <div class="row">
-            <div>
-                <div class="label">Nama</div>
-                <div class="value">${d.nama}</div>
-            </div>
-            <div>
-                <div class="label">Maskapai</div>
-                <div class="value">${d.maskapai}</div>
-            </div>
+            <div><div class="label">Nama</div><div class="value">${d.nama}</div></div>
+            <div><div class="label">Maskapai</div><div class="value">${d.maskapai}</div></div>
         </div>
 
-        <div class="route">
-            ${d.dari} ✈ ${d.ke}
+        <div class="route">${d.dari} ✈ ${d.ke}</div>
+
+        <div class="row">
+            <div><div class="label">Flight</div><div class="value">${d.flight}</div></div>
+            <div><div class="label">Jadwal</div><div class="value">${d.jam}</div></div>
         </div>
 
         <div class="row">
-            <div>
-                <div class="label">Flight</div>
-                <div class="value">${d.flight}</div>
-            </div>
-            <div>
-                <div class="label">Jam</div>
-                <div class="value">${d.jam}</div>
-            </div>
+            <div><div class="label">Gate</div><div class="value">${d.gate}</div></div>
+            <div><div class="label">Seat</div><div class="value">${d.seat}</div></div>
         </div>
 
         <div class="row">
-            <div>
-                <div class="label">Gate</div>
-                <div class="value">${d.gate}</div>
-            </div>
-            <div>
-                <div class="label">Seat</div>
-                <div class="value">${d.seat}</div>
-            </div>
+            <div><div class="label">Boarding</div><div class="value">${d.boarding}</div></div>
+            <div><div class="label">Total</div><div class="value">${d.total}</div></div>
         </div>
 
-        <div class="row">
-            <div>
-                <div class="label">Boarding</div>
-                <div class="value">${d.boarding}</div>
-            </div>
-            <div>
-                <div class="label">Total</div>
-                <div class="value">${d.total}</div>
-            </div>
-        </div>
+        <div class="info">Class: ${d.class} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}</div>
 
-        <div class="info">
-        Class: ${d.class} | Bagasi: ${d.bagasi} | Konsumsi: ${d.konsumsi}
-        </div>
-
-        <div class="status">⏳ ${d.status}</div>
+        <div class="status">${d.status}</div>
 
         <div class="timer" id="timer"></div>
-
-        <div class="info">
-        Segera lakukan pembayaran sebelum harga berubah
-        </div>
 
         <div class="qr">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${input}">
         </div>
+
+        <div style="margin-top:20px">
+            <div class="label">Daftar Penumpang</div>
+            ${paxList}
+        </div>
         `;
 
         result.style.display="block";
-
         startTimer(d.expired);
 
     } else {
         alert("PNR tidak ditemukan");
     }
 }
-
 
 // TIMER
 function startTimer(duration) {
@@ -267,19 +260,9 @@ function startTimer(duration) {
 
         if (--timer < 0) {
             clearInterval(interval);
-            display.innerHTML = "❌ Harga telah berubah, silakan pesan ulang";
+            display.innerHTML = "❌ Waktu habis";
         }
     }, 1000);
-}
-
-
-// AUTO SCAN
-const urlParams = new URLSearchParams(window.location.search);
-const pnr = urlParams.get('pnr');
-
-if (pnr) {
-    document.getElementById("pnr").value = pnr;
-    setTimeout(() => cekPNR(), 500);
 }
 
 </script>
