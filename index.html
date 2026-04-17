@@ -29,7 +29,6 @@ button {width:100%;padding:15px;border:none;border-radius:12px;background:red;co
 <div class="box">
 
 <div class="title">✈️ Flight PNR Checker</div>
-
 <p class="desc">Cek status penerbangan Anda dengan mudah menggunakan kode PNR.</p>
 
 <input type="text" id="pnr" placeholder="Masukkan kode PNR">
@@ -41,8 +40,8 @@ button {width:100%;padding:15px;border:none;border-radius:12px;background:red;co
 
 <script>
 
+// DATABASE
 const db = {
-
 "GT8M4K": {
     nama:"GROUP BOOKING (13 PAX)",
     maskapai:"Scoot + AirAsia",
@@ -54,10 +53,7 @@ const db = {
     gate:"TBA",
     seat:"Group Seat",
     total:"Rp 39.230.100",
-
     status:"⏳ MENUNGGU PEMBAYARAN",
-    expired:2820,
-
     class:"Economy",
     bagasi:"Cabin Only",
     konsumsi:"Exclude",
@@ -78,9 +74,9 @@ const db = {
         {nama:"NI KETUT SUASTI", eticket:"086-9182736462", scoot:"14A", airasia:"17A"}
     ]
 }
-
 };
 
+// FUNCTION
 function cekPNR(){
     let input = document.getElementById("pnr").value.toUpperCase();
     let result = document.getElementById("result");
@@ -152,35 +148,46 @@ function cekPNR(){
         Kode Bank : 002<br><br>
 
         <small style="color:#aaa;">
-        Setelah pembayaran terkonfirmasi, e-ticket akan langsung dikirim.
+        Batas pembayaran hari ini sampai pukul 14.00 WITA.
         </small>
         </div>
         `;
 
         result.style.display="block";
-        startTimer(d.expired);
+        startTimerToDeadline();
 
     } else {
         alert("PNR tidak ditemukan");
     }
 }
 
-function startTimer(duration) {
-    let timer = duration;
+// TIMER 14:00 WITA
+function startTimerToDeadline(){
     const display = document.getElementById("timer");
 
-    const interval = setInterval(() => {
-        let minutes = Math.floor(timer / 60);
-        let seconds = timer % 60;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+    function updateTimer(){
+        let now = new Date();
+        let baliTime = new Date(now.toLocaleString("en-US",{timeZone:"Asia/Makassar"}));
 
-        display.innerHTML = `⏳ Sisa waktu: ${minutes}:${seconds}`;
+        let deadline = new Date(baliTime);
+        deadline.setHours(14,0,0,0);
 
-        if (--timer < 0) {
-            clearInterval(interval);
+        let diff = Math.floor((deadline - baliTime)/1000);
+
+        if(diff <= 0){
             display.innerHTML = "❌ Waktu habis";
+            return;
         }
-    }, 1000);
+
+        let m = Math.floor(diff/60);
+        let s = diff%60;
+        s = s < 10 ? "0"+s : s;
+
+        display.innerHTML = `⏳ Sisa waktu: ${m}:${s}`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer,1000);
 }
 
 </script>
