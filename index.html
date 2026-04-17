@@ -1,146 +1,198 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkyPNR</title><style>
-body{margin:0;font-family:Arial;background:linear-gradient(#0b3c75,#1e5aa8);}
+  <title>Cek PNR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* SPLASH */
-#splash{
-position:fixed;width:100%;height:100%;
-background:linear-gradient(#0b3c75,#1e5aa8);
-display:flex;flex-direction:column;justify-content:center;align-items:center;
-color:white;z-index:9999;
-}
-.plane{
-position:absolute;font-size:30px;left:-50px;top:50%;
-animation:fly 2.5s ease forwards;
-}
-@keyframes fly{
-0%{left:-50px;transform:translateY(20px);}
-50%{transform:translateY(-20px);}
-100%{left:110%;transform:translateY(-60px);}
-}
-.intro{text-align:center;margin-top:20px;}
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+      background: #f4f6f9;
+    }
 
-.container{max-width:420px;margin:auto;padding:15px;}
-.card{background:white;padding:15px;border-radius:12px;margin-top:10px;}
-button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#0b3c75;color:white;}
+    /* ✈️ animasi pesawat */
+    .plane {
+      position: fixed;
+      top: 20%;
+      left: -60px;
+      font-size: 32px;
+      animation: fly 4s linear forwards;
+    }
 
-.ticket{display:none;background:white;border-radius:12px;margin-top:10px;padding:15px;}
-.passenger{background:#f2f2f2;padding:8px;border-radius:8px;margin-top:5px;}
-.timer{background:#ffe5e5;padding:8px;text-align:center;margin-top:10px;border-radius:8px;}
-.status{font-weight:bold;color:red;}
-.payment{display:none;}
-.testi{background:#f2f2f2;padding:10px;border-radius:8px;margin-top:8px;font-size:13px;}
-.star{color:gold;}
-</style></head><body><div id="splash">
+    @keyframes fly {
+      0% { left: -60px; }
+      100% { left: 110%; }
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 90%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+
+    .hidden { display: none; }
+
+    .status { color: red; }
+
+    /* loader */
+    .loader {
+      margin: 10px auto;
+      border: 5px solid #eee;
+      border-top: 5px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
 <div class="plane">✈️</div>
-<div class="intro">
-<h2>Masukkan kode PNR Anda</h2>
-<p>Cek E-ticket Anda segera</p>
+
+<!-- ================= PAGE 1 ================= -->
+<div id="page1">
+
+  <h3>🔍 Cek Status Booking</h3>
+  <p>Masukkan kode booking (PNR) dan nama belakang</p>
+
+  <input type="text" id="pnr" placeholder="PNR (contoh: GR123A)">
+  <input type="text" id="lastname" placeholder="Nama Belakang">
+
+  <button onclick="cekPNR()">Cek</button>
+
+  <div id="hasil" class="card hidden"></div>
+
 </div>
-</div><audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
-<div class="container"><div class="card">
-<input id="pnr" placeholder="Masukkan kode booking">
-<button onclick="cekPNR()">Cek Status</button>
-</div><div class="ticket" id="ticket">
-<p><b>Maskapai:</b> <span id="airline"></span></p>
-<p><b>PNR:</b> <span id="pnrOut"></span></p>
-<p><b>Rute:</b> <span id="rute"></span></p>
-<p><b>Flight:</b> <span id="flight"></span></p>
-<p><b>Tanggal:</b> <span id="tanggal"></span></p>
-<p><b>Jam:</b> <span id="jam"></span></p>
-<p><b>Gate:</b> <span id="gate"></span></p><div id="passengers"></div><div class="timer">⏳ <span id="countdown"></span></div>
-<p class="status" id="status"></p><button onclick="showPayment()">💳 Bayar Sekarang</button>
+<!-- ================= PAGE 2 ================= -->
+<div id="page2" class="hidden">
 
-</div><div class="card payment" id="payment">
-<h3>💳 Pembayaran</h3><p><b>BANK:</b> MNC</p>
-<p><b>A/n:</b> PT GOLDEN RAMA TRAVEL</p>
-<p><b>No Rek:</b> 2060-1000-6980-917</p>
-<p><b>Kode Bank:</b> 485</p><p style="font-size:13px;color:#555;">
-Terimakasih sudah memilih kami sebagai partner pemesanan tiket kamu
-</p><h3>⭐ Testimoni</h3><div class="testi"><div class="star">★★★★★</div>Repeat order aman</div>
-<div class="testi"><div class="star">★★★★★</div>Sudah cek rekening resmi jadi tenang</div>
-<div class="testi"><div class="star">★★★★☆</div>Pertama kali order lancar</div>
-<div class="testi"><div class="star">★★★★★</div>Langganan terus</div>
-<div class="testi"><div class="star">★★★★★</div>Admin cepat</div>
-<div class="testi"><div class="star">★★★★☆</div>Trusted</div>
-<div class="testi"><div class="star">★★★★★</div>Repeat lagi</div></div></div><script>
+  <h2>💳 Pembayaran</h2>
 
-// SPLASH
-setTimeout(()=>{document.getElementById("splash").style.display="none";},3000);
+  <div class="card">
+    <p><b>BANK:</b> MNC</p>
+    <p><b>A/n:</b> PT GOLDEN RAMA TRAVEL</p>
+    <p><b>No Rek:</b> 2060-1000-6980-917</p>
+    <p><b>Kode Bank:</b> 485</p>
+  </div>
 
-// DATABASE
-const db={
-"INP3V6":{
-nama:"Seprianus / Regina / Mari",
-airline:"Batik Air",
-rute:"Denpasar → Tambolaka",
-flight:"ID-6324",
-tanggal:"18 Juli 2025",
-jam:"09:10",
-gate:"B4",
-class:"Ekonomi",
-bagasi:"20kg",
-meal:"Snack"
-}
+  <p>🙏 Terimakasih atas kepercayaan Anda memilih agen kami</p>
+
+</div>
+
+<audio id="sound">
+  <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3">
+</audio>
+
+<script>
+/* ================= DATA PNR (MUDAH EDIT) ================= */
+const DATA_PNR = {
+  pnr: "GR123A",
+  nama: "SANTOSO",
+  rute: "CGK → DPS",
+  maskapai: "Garuda Indonesia",
+  waktu: "10:00 - 12:00",
+  class: "Economy",
+  bagasi: "20kg",
+  konsumsi: "Snack"
 };
 
-// SOUND
-function play(){
-let s=document.getElementById("clickSound");
-s.currentTime=0;s.play();
+/* ================= CEK PNR ================= */
+function cekPNR() {
+  const inputPNR = document.getElementById("pnr").value.toUpperCase();
+  const inputNama = document.getElementById("lastname").value.toUpperCase();
+
+  if (!inputPNR || !inputNama) {
+    alert("Isi data dulu!");
+    return;
+  }
+
+  if (inputPNR !== DATA_PNR.pnr || inputNama !== DATA_PNR.nama) {
+    alert("PNR tidak ditemukan!");
+    return;
+  }
+
+  const hasil = document.getElementById("hasil");
+  hasil.classList.remove("hidden");
+
+  hasil.innerHTML = `
+    <h4>Detail Booking</h4>
+
+    <p><b>Nama:</b> ${DATA_PNR.nama}</p>
+    <p><b>Rute:</b> ${DATA_PNR.rute}</p>
+    <p><b>Maskapai:</b> ${DATA_PNR.maskapai}</p>
+    <p><b>Waktu:</b> ${DATA_PNR.waktu}</p>
+    <p><b>Class:</b> ${DATA_PNR.class}</p>
+    <p><b>Bagasi:</b> ${DATA_PNR.bagasi}</p>
+    <p><b>Konsumsi:</b> ${DATA_PNR.konsumsi}</p>
+
+    <h3 class="status">⏳ PENDING PAYMENT</h3>
+
+    <div class="loader"></div>
+
+    <p>Segera lakukan pembayaran dalam:</p>
+    <h2 id="timer">30:00</h2>
+
+    <button onclick="goPayment()">Bayar Sekarang</button>
+  `;
+
+  document.getElementById("sound").play();
+  startTimer(1800);
 }
 
-// CEK PNR
-function cekPNR(){
-play();
-let p=document.getElementById("pnr").value.toUpperCase();
+/* ================= TIMER ================= */
+function startTimer(duration) {
+  let time = duration;
 
-if(!db[p]){alert("PNR tidak ditemukan");return;}
+  const interval = setInterval(() => {
+    let m = Math.floor(time / 60);
+    let s = time % 60;
 
-let d=db[p];
+    s = s < 10 ? "0" + s : s;
 
-airline.innerText=d.airline;
-pnrOut.innerText=p;
-rute.innerText=d.rute;
-flight.innerText=d.flight;
-tanggal.innerText=d.tanggal;
-jam.innerText=d.jam;
-gate.innerText=d.gate;
+    document.getElementById("timer").innerText = m + ":" + s;
 
-passengers.innerHTML=`
-<div class="passenger">👤 ${d.nama}</div>
-<div class="passenger">🎫 Class: ${d.class}</div>
-<div class="passenger">🍱 Meal: ${d.meal}</div>
-<div class="passenger">🧳 Bagasi: ${d.bagasi}</div>
-`;
-
-ticket.style.display="block";
-status.innerText="PENDING PAYMENT";
-
-startTimer();
+    if (--time < 0) {
+      clearInterval(interval);
+      document.getElementById("timer").innerText = "WAKTU HABIS";
+    }
+  }, 1000);
 }
 
-// TIMER
-let t=600;
-function startTimer(){
-setInterval(()=>{
-let m=Math.floor(t/60);
-let s=t%60;
-countdown.innerText=m+":"+(s<10?"0"+s:s);
-t--;
-if(t<0){status.innerText="EXPIRED";}
-},1000);
+/* ================= NAVIGASI ================= */
+function goPayment() {
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
 }
+</script>
 
-// PAYMENT
-function showPayment(){
-document.getElementById("payment").style.display="block";
-window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
-}
-
-</script></body>
+</body>
 </html>
