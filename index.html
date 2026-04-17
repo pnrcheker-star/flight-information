@@ -1,1 +1,146 @@
+<!DOCTYPE html><html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyPNR</title><style>
+body{margin:0;font-family:Arial;background:linear-gradient(#0b3c75,#1e5aa8);}
 
+/* SPLASH */
+#splash{
+position:fixed;width:100%;height:100%;
+background:linear-gradient(#0b3c75,#1e5aa8);
+display:flex;flex-direction:column;justify-content:center;align-items:center;
+color:white;z-index:9999;
+}
+.plane{
+position:absolute;font-size:30px;left:-50px;top:50%;
+animation:fly 2.5s ease forwards;
+}
+@keyframes fly{
+0%{left:-50px;transform:translateY(20px);}
+50%{transform:translateY(-20px);}
+100%{left:110%;transform:translateY(-60px);}
+}
+.intro{text-align:center;margin-top:20px;}
+
+.container{max-width:420px;margin:auto;padding:15px;}
+.card{background:white;padding:15px;border-radius:12px;margin-top:10px;}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#0b3c75;color:white;}
+
+.ticket{display:none;background:white;border-radius:12px;margin-top:10px;padding:15px;}
+.passenger{background:#f2f2f2;padding:8px;border-radius:8px;margin-top:5px;}
+.timer{background:#ffe5e5;padding:8px;text-align:center;margin-top:10px;border-radius:8px;}
+.status{font-weight:bold;color:red;}
+.payment{display:none;}
+.testi{background:#f2f2f2;padding:10px;border-radius:8px;margin-top:8px;font-size:13px;}
+.star{color:gold;}
+</style></head><body><div id="splash">
+<div class="plane">✈️</div>
+<div class="intro">
+<h2>Masukkan kode PNR Anda</h2>
+<p>Cek E-ticket Anda segera</p>
+</div>
+</div><audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+<div class="container"><div class="card">
+<input id="pnr" placeholder="Masukkan kode booking">
+<button onclick="cekPNR()">Cek Status</button>
+</div><div class="ticket" id="ticket">
+<p><b>Maskapai:</b> <span id="airline"></span></p>
+<p><b>PNR:</b> <span id="pnrOut"></span></p>
+<p><b>Rute:</b> <span id="rute"></span></p>
+<p><b>Flight:</b> <span id="flight"></span></p>
+<p><b>Tanggal:</b> <span id="tanggal"></span></p>
+<p><b>Jam:</b> <span id="jam"></span></p>
+<p><b>Gate:</b> <span id="gate"></span></p><div id="passengers"></div><div class="timer">⏳ <span id="countdown"></span></div>
+<p class="status" id="status"></p><button onclick="showPayment()">💳 Bayar Sekarang</button>
+
+</div><div class="card payment" id="payment">
+<h3>💳 Pembayaran</h3><p><b>BANK:</b> MNC</p>
+<p><b>A/n:</b> PT GOLDEN RAMA TRAVEL</p>
+<p><b>No Rek:</b> 2060-1000-6980-917</p>
+<p><b>Kode Bank:</b> 485</p><p style="font-size:13px;color:#555;">
+Terimakasih sudah memilih kami sebagai partner pemesanan tiket kamu
+</p><h3>⭐ Testimoni</h3><div class="testi"><div class="star">★★★★★</div>Repeat order aman</div>
+<div class="testi"><div class="star">★★★★★</div>Sudah cek rekening resmi jadi tenang</div>
+<div class="testi"><div class="star">★★★★☆</div>Pertama kali order lancar</div>
+<div class="testi"><div class="star">★★★★★</div>Langganan terus</div>
+<div class="testi"><div class="star">★★★★★</div>Admin cepat</div>
+<div class="testi"><div class="star">★★★★☆</div>Trusted</div>
+<div class="testi"><div class="star">★★★★★</div>Repeat lagi</div></div></div><script>
+
+// SPLASH
+setTimeout(()=>{document.getElementById("splash").style.display="none";},3000);
+
+// DATABASE
+const db={
+"INP3V6":{
+nama:"Seprianus / Regina / Mari",
+airline:"Batik Air",
+rute:"Denpasar → Tambolaka",
+flight:"ID-6324",
+tanggal:"18 Juli 2025",
+jam:"09:10",
+gate:"B4",
+class:"Ekonomi",
+bagasi:"20kg",
+meal:"Snack"
+}
+};
+
+// SOUND
+function play(){
+let s=document.getElementById("clickSound");
+s.currentTime=0;s.play();
+}
+
+// CEK PNR
+function cekPNR(){
+play();
+let p=document.getElementById("pnr").value.toUpperCase();
+
+if(!db[p]){alert("PNR tidak ditemukan");return;}
+
+let d=db[p];
+
+airline.innerText=d.airline;
+pnrOut.innerText=p;
+rute.innerText=d.rute;
+flight.innerText=d.flight;
+tanggal.innerText=d.tanggal;
+jam.innerText=d.jam;
+gate.innerText=d.gate;
+
+passengers.innerHTML=`
+<div class="passenger">👤 ${d.nama}</div>
+<div class="passenger">🎫 Class: ${d.class}</div>
+<div class="passenger">🍱 Meal: ${d.meal}</div>
+<div class="passenger">🧳 Bagasi: ${d.bagasi}</div>
+`;
+
+ticket.style.display="block";
+status.innerText="PENDING PAYMENT";
+
+startTimer();
+}
+
+// TIMER
+let t=600;
+function startTimer(){
+setInterval(()=>{
+let m=Math.floor(t/60);
+let s=t%60;
+countdown.innerText=m+":"+(s<10?"0"+s:s);
+t--;
+if(t<0){status.innerText="EXPIRED";}
+},1000);
+}
+
+// PAYMENT
+function showPayment(){
+document.getElementById("payment").style.display="block";
+window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+</script></body>
+</html>
