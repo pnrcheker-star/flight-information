@@ -1,197 +1,354 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight PNR Checker</title>
+<title>SkyPNR</title>
+
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #000;
-    color: #fff;
+:root{ --primary:#0b3c75; }
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(#0b3c75,#1e5aa8);
 }
-.header {
-    text-align: center;
-    padding: 15px;
-    font-weight: bold;
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:linear-gradient(#0b3c75,#1e5aa8);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  z-index:9999;
+  transition:0.6s;
 }
-.box {
-    margin: 20px;
-    background: #111;
-    border-radius: 25px;
-    padding: 20px;
+.logo{
+  font-size:32px;
+  opacity:0;
+  transform:scale(0.8);
+  animation:logoIn 0.8s forwards;
 }
-.title {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 10px;
+.subtitle{
+  font-size:12px;
+  opacity:0;
+  animation:fadeIn 1s 0.5s forwards;
 }
-.desc {
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 20px;
-    line-height: 1.5;
+.loader{
+  margin-top:20px;
+  width:40px;
+  height:40px;
+  border:4px solid white;
+  border-top:4px solid transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
 }
-input {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    background: #222;
-    color: #fff;
-    margin-bottom: 15px;
+.splash-hide{ opacity:0; pointer-events:none; }
+
+/* MAIN */
+.container{ max-width:420px; margin:auto; padding:15px; }
+.header{ text-align:center; color:white; margin-bottom:15px; }
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:12px;
 }
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    background: red;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
+
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
 }
-.result {
-    margin-top: 20px;
-    background: #1a1a1a;
-    border-radius: 20px;
-    padding: 15px;
-    display: none;
+
+button{
+  background:var(--primary);
+  color:white;
+  border:none;
+  font-weight:bold;
 }
-.row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+
+.loading{ display:none; text-align:center; }
+
+/* TICKET */
+.ticket{
+  display:none;
+  background:white;
+  border-radius:16px;
+  overflow:hidden;
+  transform:scale(0.9);
+  opacity:0;
+  transition:0.4s;
 }
-.label {
-    font-size: 12px;
-    color: #aaa;
+.ticket.show{
+  transform:scale(1);
+  opacity:1;
 }
-.value {
-    font-weight: bold;
+
+.ticket-header{
+  background:var(--primary);
+  color:white;
+  padding:12px;
 }
-.route {
-    text-align: center;
-    margin: 15px 0;
-    font-size: 18px;
+
+.ticket-body{ padding:15px; }
+
+.row{ display:flex; justify-content:space-between; margin-bottom:6px; }
+
+.perforation{ border-top:2px dashed #ccc; margin:12px 0; }
+
+.passenger{
+  background:#f7f7f7;
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:6px;
 }
-.status {
-    margin-top: 15px;
-    background: #00c853;
-    color: #000;
-    text-align: center;
-    padding: 10px;
-    border-radius: 20px;
-    font-weight: bold;
+
+.timer{
+  background:#ffe5e5;
+  padding:8px;
+  border-radius:8px;
+  text-align:center;
 }
+
+.status{ font-weight:bold; margin-top:6px; }
+
+/* WA FLOAT */
+.wa-float{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#25D366;
+  color:white;
+  font-size:24px;
+  width:55px;
+  height:55px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:50%;
+  box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  text-decoration:none;
+  z-index:999;
+}
+
+/* ANIM */
+@keyframes logoIn{ to{opacity:1; transform:scale(1);} }
+@keyframes fadeIn{ to{opacity:1;} }
+@keyframes spin{ to{transform:rotate(360deg);} }
 </style>
 </head>
+
 <body>
-<div class="header">Flight PNR Checker</div>
-<div class="box">
-<div class="title">✈️ Flight PNR Checker</div>
-<p class="desc">
-Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
-</p>
-<input type="text" id="pnr" placeholder="Masukkan kode PNR">
-<button onclick="cekPNR()">Cek Status</button>
-<div class="result" id="result"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="logo">✈️ SkyPNR</div>
+  <div class="subtitle">Airline Reservation System</div>
+  <div class="loader"></div>
 </div>
+
+<!-- SOUND -->
+<audio id="clickSound">
+<source src="https://www.soundjay.com/buttons/sounds/button-16.mp3">
+</audio>
+
+<div class="container">
+
+<div class="header">
+<h2>✈️ SkyPNR</h2>
+<p>Sistem Reservasi Penerbangan</p>
+</div>
+
+<div class="card">
+<input id="pnr" placeholder="Kode Booking (6 karakter)">
+<button onclick="playSound(); cekPNR()">Cek Status</button>
+</div>
+
+<div class="card loading" id="loading">
+<p>Memproses data...</p>
+</div>
+
+<div class="ticket" id="ticket">
+<div class="ticket-header">
+<h3 id="airline"></h3>
+<small id="date"></small>
+</div>
+
+<div class="ticket-body">
+
+<div class="row"><span>PNR</span><b id="pnrOut"></b></div>
+<div class="row"><span>Rute</span><b id="rute"></b></div>
+<div class="row"><span>Flight</span><b id="flight"></b></div>
+
+<div class="perforation"></div>
+
+<div id="passengers"></div>
+
+<div class="perforation"></div>
+
+<div class="row"><span>Tanggal</span><b id="tanggal"></b></div>
+<div class="row"><span>Berangkat</span><b id="depart"></b></div>
+<div class="row"><span>Tiba</span><b id="arrive"></b></div>
+<div class="row"><span>Gate</span><b id="gate"></b></div>
+
+<div class="timer">⏳ <span id="countdown">10:00</span></div>
+<div class="status" id="status">BOOKED</div>
+
+</div>
+</div>
+
+</div>
+
+<!-- WA FLOAT -->
+<a href="#" class="wa-float" onclick="kirimWA()">💬</a>
+
 <script>
-const db = {
-    "JHMAUZ": {
-        nama:"Ny. Muliani",
-        maskapai:"Batik Air",
-        flight:"ID-6316",
-        dari:"PNK",
-        ke:"UPG",
-        jam:"14:55 - 19:20",
-        gate:"A2",
-        seat:"18A",
-        total:"Rp 1.739.900",
-        status:"Confirmed"
-    },
-    "INP3V6": {
-        nama:"Tn. Seprianus Ngongo Lende / Ny. Regina Ra Mete / Mari Njek Lika Ngongo",
-        maskapai:"Batik Air",
-        flight:"ID-6324",
-        dari:"DPS",
-        ke:"TMC",
-        jam:"09:10",
-        boarding:"08:30",
-        gate:"B4",
-        seat:"12A / 12B / 12C",
-        total:"Rp 1.700.900",
-        status:"Menunggu Pembayaran"
-    }
-};function cekPNR(){ let input=document.getElementById("pnr").value.toUpperCase(); let result=document.getElementById("result");
+let time=600, timerInterval;
 
-if(db[input]){
-    let d=db[input];
+const airlines=["Garuda Indonesia","Lion Air","Batik Air","Citilink"];
+const routes=["Jakarta → Bali","Makassar → Jakarta","Surabaya → Lombok","Kendari → Makassar"];
 
-    result.innerHTML=`
-    <div class="row">
-        <div>
-            <div class="label">Nama</div>
-            <div class="value">${d.nama.split("/").map(n => n.trim()).join("<br>")}</div>
-        </div>
-        <div>
-            <div class="label">Maskapai</div>
-            <div class="value">${d.maskapai}</div>
-        </div>
-    </div>
+/* SPLASH */
+window.onload=()=>{
+setTimeout(()=>{
+splash.classList.add("splash-hide");
+setTimeout(()=>splash.style.display="none",600);
+},2200);
+};
 
-    <div class="route">
-        ${d.dari} ✈ ${d.ke}
-    </div>
-
-    <div class="row">
-        <div>
-            <div class="label">Flight</div>
-            <div class="value">${d.flight}</div>
-        </div>
-        <div>
-            <div class="label">Jam</div>
-            <div class="value">${d.jam}</div>
-        </div>
-    </div>
-
-    ${d.boarding ? `
-    <div class="row">
-        <div>
-            <div class="label">Boarding</div>
-            <div class="value">${d.boarding}</div>
-        </div>
-    </div>` : ""}
-
-    <div class="row">
-        <div>
-            <div class="label">Gate</div>
-            <div class="value">${d.gate}</div>
-        </div>
-        <div>
-            <div class="label">Seat</div>
-            <div class="value">${d.seat}</div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div>
-            <div class="label">Total</div>
-            <div class="value">${d.total}</div>
-        </div>
-    </div>
-
-    <div class="status">✔ ${d.status}</div>
-    `;
-
-    result.style.display="block";
-} else {
-    alert("PNR tidak ditemukan");
+/* SOUND */
+function beep(){
+let ctx=new(window.AudioContext||window.webkitAudioContext)();
+let osc=ctx.createOscillator();
+osc.frequency.value=800;
+osc.connect(ctx.destination);
+osc.start();
+osc.stop(ctx.currentTime+0.1);
+}
+function playSound(){
+beep();
+clickSound.currentTime=0;
+clickSound.play().catch(()=>{});
 }
 
-} </script>
+/* LOGIC */
+function validPNR(p){ return /^[A-Z0-9]{6}$/.test(p); }
+
+function randomTime(){
+let h=Math.floor(Math.random()*24);
+let m=Math.floor(Math.random()*60);
+return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m);
+}
+
+function genPassengers(){
+let n=["Budi","Andi","Rina","Sari","Dewi"];
+let c=Math.floor(Math.random()*3)+1, html="";
+for(let i=0;i<c;i++){
+html+=`<div class="passenger">${n[Math.floor(Math.random()*n.length)]} - Seat ${Math.floor(Math.random()*30)}A</div>`;
+}
+return html;
+}
+
+function generateData(pnr){
+return{
+pnr,
+airline:airlines[Math.floor(Math.random()*airlines.length)],
+rute:routes[Math.floor(Math.random()*routes.length)],
+flight:"ID-"+Math.floor(Math.random()*900+100),
+gate:"G"+Math.floor(Math.random()*10),
+tanggal:new Date().toLocaleDateString("id-ID"),
+depart:randomTime(),
+arrive:randomTime()
+};
+}
+
+function startTimer(){
+clearInterval(timerInterval);
+timerInterval=setInterval(()=>{
+let m=Math.floor(time/60);
+let s=time%60;
+countdown.innerText=m+":"+(s<10?"0"+s:s);
+time--;
+
+if(time<400){ status.innerText="ISSUED"; status.style.color="green"; }
+if(time<200){ status.innerText="CHECK-IN"; status.style.color="blue"; }
+
+if(time<0){
+clearInterval(timerInterval);
+countdown.innerText="EXPIRED";
+status.innerText="EXPIRED";
+status.style.color="red";
+}
+},1000);
+}
+
+function cekPNR(){
+let pnr=pnrInput.value.toUpperCase();
+
+if(!validPNR(pnr)){
+alert("PNR harus 6 karakter");
+return;
+}
+
+loading.style.display="block";
+ticket.classList.remove("show");
+
+setTimeout(()=>{
+loading.style.display="none";
+
+let d=generateData(pnr);
+
+airline.innerText=d.airline;
+pnrOut.innerText=d.pnr;
+rute.innerText=d.rute;
+flight.innerText=d.flight;
+gate.innerText=d.gate;
+
+tanggal.innerText=d.tanggal;
+depart.innerText=d.depart;
+arrive.innerText=d.arrive;
+
+date.innerText=new Date().toLocaleString("id-ID");
+
+passengers.innerHTML=genPassengers();
+
+ticket.style.display="block";
+setTimeout(()=>ticket.classList.add("show"),50);
+
+beep();
+
+time=600;
+status.innerText="BOOKED";
+status.style.color="orange";
+
+startTimer();
+
+},1500);
+}
+
+/* WHATSAPP */
+function kirimWA(){
+let text=`✈️ SkyPNR
+
+PNR: ${pnrOut.innerText}
+Rute: ${rute.innerText}
+Flight: ${flight.innerText}
+Tanggal: ${tanggal.innerText}
+Berangkat: ${depart.innerText}
+Tiba: ${arrive.innerText}
+Status: ${status.innerText}`;
+
+window.open("https://wa.me/?text="+encodeURIComponent(text));
+}
+</script>
 
 </body>
 </html>
