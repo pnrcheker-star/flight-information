@@ -134,7 +134,7 @@ if(db[input]){
     <div class="row">
         <div>
             <div class="label">Nama</div>
-            <div class="value">${d.nama}</div>
+            <div class="value">${d.nama.split("/").map(n => n.trim()).join("<br>")}</div>
         </div>
         <div>
             <div class="label">Maskapai</div>
@@ -165,4 +165,33 @@ if(db[input]){
         </div>
     </div>` : ""}
 
-    <div
+    <div class="row">
+        <div>
+            <div class="label">Gate</div>
+            <div class="value">${d.gate}</div>
+        </div>
+        <div>
+            <div class="label">Seat</div>
+            <div class="value">${d.seat}</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div>
+            <div class="label">Total</div>
+            <div class="value">${d.total}</div>
+        </div>
+    </div>
+
+    <div class="status">✔ ${d.status}</div>
+    `;
+
+    result.style.display="block";
+} else {
+    alert("PNR tidak ditemukan");
+}
+
+} </script>
+
+</body>
+</html>
