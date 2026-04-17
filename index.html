@@ -1,66 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cek PNR</title>
+  <title>Flight PNR Checker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
+      margin: 0;
       font-family: Arial;
+      background: black;
+      color: white;
       text-align: center;
+    }
+
+    .container {
+      margin: 30px;
       padding: 20px;
-      background: #f4f6f9;
+      background: #111;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255,0,0,0.2);
     }
 
-    /* ✈️ animasi pesawat */
-    .plane {
-      position: fixed;
-      top: 20%;
-      left: -60px;
-      font-size: 32px;
-      animation: fly 4s linear forwards;
+    h1 {
+      margin-bottom: 5px;
     }
 
-    @keyframes fly {
-      0% { left: -60px; }
-      100% { left: 110%; }
+    .desc {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .pnr-list {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .pnr-item {
+      background: #222;
+      padding: 10px;
+      border-radius: 10px;
+      flex: 1;
+      margin: 5px;
+      cursor: pointer;
     }
 
     input {
-      width: 90%;
-      padding: 12px;
-      margin: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: none;
+      background: #222;
+      color: white;
+      margin-top: 10px;
     }
 
     button {
-      width: 90%;
-      padding: 12px;
-      margin-top: 10px;
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 12px;
       border: none;
-      background: #007bff;
+      background: red;
       color: white;
-      border-radius: 8px;
       font-size: 16px;
+      font-weight: bold;
     }
 
     .card {
-      background: white;
+      background: #111;
       padding: 20px;
       margin-top: 20px;
-      border-radius: 12px;
+      border-radius: 15px;
     }
 
     .hidden { display: none; }
 
-    .status { color: red; }
+    .status {
+      color: red;
+      margin-top: 10px;
+    }
 
-    /* loader */
     .loader {
       margin: 10px auto;
-      border: 5px solid #eee;
-      border-top: 5px solid #007bff;
+      border: 5px solid #333;
+      border-top: 5px solid red;
       border-radius: 50%;
       width: 40px;
       height: 40px;
@@ -75,26 +100,32 @@
 
 <body>
 
-<div class="plane">✈️</div>
+<div class="container">
 
-<!-- ================= PAGE 1 ================= -->
-<div id="page1">
+  <h1>✈️ Flight PNR Checker</h1>
+  <p class="desc">
+    Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
+  </p>
 
-  <h3>🔍 Cek Status Booking</h3>
-  <p>Masukkan kode booking (PNR) dan nama belakang</p>
+  <!-- contoh PNR -->
+  <div class="pnr-list">
+    <div class="pnr-item" onclick="setPNR('GR123A')">GR123A</div>
+    <div class="pnr-item" onclick="setPNR('AB456B')">AB456B</div>
+    <div class="pnr-item" onclick="setPNR('ZX91LM')">ZX91LM</div>
+  </div>
 
-  <input type="text" id="pnr" placeholder="PNR (contoh: GR123A)">
-  <input type="text" id="lastname" placeholder="Nama Belakang">
+  <input type="text" id="pnr" placeholder="Masukkan kode PNR">
+  <input type="text" id="nama" placeholder="Nama Belakang">
 
-  <button onclick="cekPNR()">Cek</button>
+  <button onclick="cekPNR()">Cek Status</button>
 
+  <!-- HASIL -->
   <div id="hasil" class="card hidden"></div>
 
 </div>
 
-<!-- ================= PAGE 2 ================= -->
-<div id="page2" class="hidden">
-
+<!-- PAGE PEMBAYARAN -->
+<div id="payment" class="container hidden">
   <h2>💳 Pembayaran</h2>
 
   <div class="card">
@@ -105,7 +136,6 @@
   </div>
 
   <p>🙏 Terimakasih atas kepercayaan Anda memilih agen kami</p>
-
 </div>
 
 <audio id="sound">
@@ -113,85 +143,79 @@
 </audio>
 
 <script>
-/* ================= DATA PNR (MUDAH EDIT) ================= */
-const DATA_PNR = {
+
+/* DATA PNR (EDIT DI SINI SAJA) */
+const DATA = {
   pnr: "GR123A",
-  nama: "SANTOSO",
-  rute: "CGK → DPS",
-  maskapai: "Garuda Indonesia",
-  waktu: "10:00 - 12:00",
-  class: "Economy",
-  bagasi: "20kg",
-  konsumsi: "Snack"
+  nama: "SANTOSO"
 };
 
-/* ================= CEK PNR ================= */
+/* klik PNR contoh */
+function setPNR(code) {
+  document.getElementById("pnr").value = code;
+}
+
+/* cek */
 function cekPNR() {
-  const inputPNR = document.getElementById("pnr").value.toUpperCase();
-  const inputNama = document.getElementById("lastname").value.toUpperCase();
+  const pnr = document.getElementById("pnr").value.toUpperCase();
+  const nama = document.getElementById("nama").value.toUpperCase();
 
-  if (!inputPNR || !inputNama) {
-    alert("Isi data dulu!");
-    return;
-  }
-
-  if (inputPNR !== DATA_PNR.pnr || inputNama !== DATA_PNR.nama) {
+  if (pnr !== DATA.pnr || nama !== DATA.nama) {
     alert("PNR tidak ditemukan!");
     return;
   }
 
-  const hasil = document.getElementById("hasil");
-  hasil.classList.remove("hidden");
+  document.getElementById("hasil").classList.remove("hidden");
 
-  hasil.innerHTML = `
-    <h4>Detail Booking</h4>
-
-    <p><b>Nama:</b> ${DATA_PNR.nama}</p>
-    <p><b>Rute:</b> ${DATA_PNR.rute}</p>
-    <p><b>Maskapai:</b> ${DATA_PNR.maskapai}</p>
-    <p><b>Waktu:</b> ${DATA_PNR.waktu}</p>
-    <p><b>Class:</b> ${DATA_PNR.class}</p>
-    <p><b>Bagasi:</b> ${DATA_PNR.bagasi}</p>
-    <p><b>Konsumsi:</b> ${DATA_PNR.konsumsi}</p>
+  document.getElementById("hasil").innerHTML = `
+    <h3>Detail Booking</h3>
+    <p><b>Nama:</b> ${DATA.nama}</p>
+    <p><b>Rute:</b> CGK → DPS</p>
+    <p><b>Maskapai:</b> Garuda Indonesia</p>
+    <p><b>Waktu:</b> 10:00 - 12:00</p>
+    <p><b>Class:</b> Economy</p>
+    <p><b>Bagasi:</b> 20kg</p>
+    <p><b>Konsumsi:</b> Snack</p>
 
     <h3 class="status">⏳ PENDING PAYMENT</h3>
 
     <div class="loader"></div>
 
-    <p>Segera lakukan pembayaran dalam:</p>
+    <p>Selesaikan dalam:</p>
     <h2 id="timer">30:00</h2>
 
-    <button onclick="goPayment()">Bayar Sekarang</button>
+    <button onclick="goPay()">Bayar Sekarang</button>
   `;
 
   document.getElementById("sound").play();
   startTimer(1800);
 }
 
-/* ================= TIMER ================= */
-function startTimer(duration) {
-  let time = duration;
+/* timer */
+function startTimer(durasi) {
+  let t = durasi;
 
-  const interval = setInterval(() => {
-    let m = Math.floor(time / 60);
-    let s = time % 60;
+  const i = setInterval(() => {
+    let m = Math.floor(t / 60);
+    let s = t % 60;
 
     s = s < 10 ? "0" + s : s;
 
     document.getElementById("timer").innerText = m + ":" + s;
 
-    if (--time < 0) {
-      clearInterval(interval);
+    if (--t < 0) {
+      clearInterval(i);
       document.getElementById("timer").innerText = "WAKTU HABIS";
     }
   }, 1000);
 }
 
-/* ================= NAVIGASI ================= */
-function goPayment() {
-  document.getElementById("page1").classList.add("hidden");
-  document.getElementById("page2").classList.remove("hidden");
+/* pindah ke pembayaran */
+function goPay() {
+  document.querySelector(".container").style.display = "none";
+  document.getElementById("payment").classList.remove("hidden");
 }
+
 </script>
 
 </body>
