@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight PNR Checker</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
+}
+.header {
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+}
+.box {
+    margin: 20px;
+    background: #111;
+    border-radius: 25px;
+    padding: 20px;
+}
+.title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+.desc {
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: #222;
+    color: #fff;
+    margin-bottom: 15px;
+}
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+.result {
+    margin-top: 20px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    padding: 15px;
+    display: none;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.label {
+    font-size: 12px;
+    color: #aaa;
+}
+.value {
+    font-weight: bold;
+}
+.route {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 18px;
+}
+.status {
+    margin-top: 15px;
+    background: #00c853;
+    color: #000;
+    text-align: center;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="header">Flight PNR Checker</div>
+<div class="box">
+<div class="title">✈️ Flight PNR Checker</div>
+<p class="desc">
+Cek status penerbangan Anda dengan mudah menggunakan kode PNR.
+</p>
+<input type="text" id="pnr" placeholder="Masukkan kode PNR">
+<button onclick="cekPNR()">Cek Status</button>
+<div class="result" id="result"></div>
+</div>
+<script>
+const db = {
+    "JHMAUZ": {
+        nama:"Ny. Muliani",
+        maskapai:"Batik Air",
+        flight:"ID-6316",
+        dari:"PNK",
+        ke:"UPG",
+        jam:"14:55 - 19:20",
+        gate:"A2",
+        seat:"18A",
+        total:"Rp 1.739.900",
+        status:"Confirmed"
+    },
+    "INP3V6": {
+        nama:"Tn. Seprianus Ngongo Lende / Ny. Regina Ra Mete / Mari Njek Lika Ngongo",
+        maskapai:"Batik Air",
+        flight:"ID-6324",
+        dari:"DPS",
+        ke:"TMC",
+        jam:"09:10",
+        boarding:"08:30",
+        gate:"B4",
+        seat:"12A / 12B / 12C",
+        total:"Rp 1.700.900",
+        status:"Menunggu Pembayaran"
+    }
+};function cekPNR(){ let input=document.getElementById("pnr").value.toUpperCase(); let result=document.getElementById("result");
+
+if(db[input]){
+    let d=db[input];
+
+    result.innerHTML=`
+    <div class="row">
+        <div>
+            <div class="label">Nama</div>
+            <div class="value">${d.nama}</div>
+        </div>
+        <div>
+            <div class="label">Maskapai</div>
+            <div class="value">${d.maskapai}</div>
+        </div>
+    </div>
+
+    <div class="route">
+        ${d.dari} ✈ ${d.ke}
+    </div>
+
+    <div class="row">
+        <div>
+            <div class="label">Flight</div>
+            <div class="value">${d.flight}</div>
+        </div>
+        <div>
+            <div class="label">Jam</div>
+            <div class="value">${d.jam}</div>
+        </div>
+    </div>
+
+    ${d.boarding ? `
+    <div class="row">
+        <div>
+            <div class="label">Boarding</div>
+            <div class="value">${d.boarding}</div>
+        </div>
+    </div>` : ""}
+
+    <div
