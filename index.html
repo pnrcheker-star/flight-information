@@ -1,115 +1,277 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PNR Checker</title><style>
-body {
+<title>E-Ticket Viewer</title>
+
+<style>
+body{
     margin:0;
-    font-family:Arial;
-    background:#000;
+    font-family:'Segoe UI',sans-serif;
+    background:#020617;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* CONTAINER */
+.container{
+    width:400px;
+    background:#020617;
+    padding:20px;
+}
+
+/* INPUT */
+input{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:none;
+    border-radius:8px;
+    background:#1e293b;
     color:#fff;
 }
 
-.box {
-    margin:20px;
-    padding:20px;
-    border-radius:20px;
-    background:#111;
-}
-
-.title {
-    text-align:center;
-    font-size:20px;
-    margin-bottom:10px;
-}
-
-input, button {
+button{
     width:100%;
     padding:12px;
+    margin-top:10px;
+    background:#22c55e;
     border:none;
-    border-radius:10px;
-    margin-bottom:10px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-input { background:#222; color:#fff; }
-button { background:red; color:#fff; }
-
-.result {
+/* TICKET */
+.ticket{
+    margin-top:20px;
+    border-radius:18px;
+    overflow:hidden;
     display:none;
-    margin-top:15px;
-    background:#1a1a1a;
-    padding:15px;
-    border-radius:15px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.7);
 }
 
-.row {
+/* HEADER */
+.ticket-header{
+    background:#1e293b;
+    padding:15px;
+}
+
+.airline{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.flight{
+    font-size:13px;
+    color:#94a3b8;
+}
+
+/* BODY */
+.ticket-body{
+    background:#f8fafc;
+    color:#000;
+    padding:18px;
+}
+
+/* ROUTE */
+.route{
     display:flex;
     justify-content:space-between;
-    margin-bottom:8px;
+    align-items:center;
 }
 
-.label { color:#aaa; font-size:12px; }
-.value { font-weight:bold; }
+.city{
+    font-size:18px;
+    font-weight:bold;
+}
 
-.status {
-    margin-top:10px;
-    padding:10px;
+.code{
+    font-size:13px;
+    color:#555;
+}
+
+/* LINE */
+.line{
+    height:1px;
+    background:#ddd;
+    margin:15px 0;
+}
+
+/* INFO GRID */
+.grid{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+}
+
+/* FOOTER */
+.ticket-footer{
+    background:#e2e8f0;
+    padding:12px;
     text-align:center;
-    border-radius:10px;
-    background:#00c853;
-    color:#000;
-}
-</style></head><body><div class="box">
-<div class="title">✈️ PNR Checker</div><input type="text" id="pnr" placeholder="Masukkan PNR">
-<button onclick="cek()">Cek</button><div class="result" id="result"></div>
-</div><script>
-
-const db = {
-
-"4E5CY5": {
-    nama:"Andika Fendi Pratama",
-    maskapai:"Sriwijaya Air",
-    flight:"SJ562 / SJ6982",
-    rute:"SUB → UPG → TTE",
-    jam:"20:05 - 12:55",
-    total:"Rp 2.231.800",
-    status:"✔ Issued"
 }
 
+/* BARCODE */
+.barcode{
+    font-family:monospace;
+    font-size:22px;
+    letter-spacing:3px;
+}
+
+/* STATUS */
+.status{
+    float:right;
+    background:#22c55e;
+    padding:4px 10px;
+    border-radius:15px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+/* ERROR */
+.error{
+    color:red;
+    text-align:center;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <input id="pnr" placeholder="Kode Booking (PNR)">
+    <input id="name" placeholder="Nama Belakang">
+
+    <button onclick="cek()">Cek Tiket</button>
+
+    <div class="error" id="error"></div>
+
+    <div class="ticket" id="ticket"></div>
+
+</div>
+
+<script>
+
+const db={
+"AB12CD":{
+name:"HARTONO",
+airline:"LION AIR",
+flight:"JT-782",
+fromCity:"Makassar",
+fromCode:"UPG",
+toCity:"Jakarta",
+toCode:"CGK",
+date:"25 Mei 2026",
+time:"08:30",
+boarding:"08:00",
+gate:"A12",
+seat:"12A"
+},
+"ZX98YU":{
+name:"SAPUTRA",
+airline:"CITILINK",
+flight:"QG-110",
+fromCity:"Makassar",
+fromCode:"UPG",
+toCity:"Surabaya",
+toCode:"SUB",
+date:"27 Mei 2026",
+time:"14:00",
+boarding:"13:20",
+gate:"B3",
+seat:"7C"
+}
 };
 
+function randomBarcode(){
+    return "||||| |||| ||||| ||||";
+}
+
 function cek(){
-    let pnr = document.getElementById("pnr").value.toUpperCase();
-    let r = document.getElementById("result");
+    const pnr=document.getElementById("pnr").value.toUpperCase();
+    const name=document.getElementById("name").value.toUpperCase();
+    const t=document.getElementById("ticket");
+    const e=document.getElementById("error");
 
-    if(db[pnr]){
-        let d = db[pnr];
+    t.style.display="none";
+    e.innerText="";
 
-        r.innerHTML = `
-        <div class="row"><div class="label">Nama</div><div class="value">${d.nama}</div></div>
-        <div class="row"><div class="label">Maskapai</div><div class="value">${d.maskapai}</div></div>
-        <div class="row"><div class="label">Flight</div><div class="value">${d.flight}</div></div>
-        <div class="row"><div class="label">Rute</div><div class="value">${d.rute}</div></div>
-        <div class="row"><div class="label">Jam</div><div class="value">${d.jam}</div></div>
-        <div class="row"><div class="label">Total</div><div class="value">${d.total}</div></div>
-
-        <div class="status">${d.status}</div>
-        `;
-
-        r.style.display="block";
-
-    } else {
-        alert("PNR tidak ditemukan");
+    if(!pnr||!name){
+        e.innerText="Isi semua data";
+        return;
     }
+
+    const d=db[pnr];
+
+    if(!d||d.name!==name){
+        e.innerText="PNR tidak ditemukan";
+        return;
+    }
+
+    t.style.display="block";
+
+    t.innerHTML=`
+    <div class="ticket-header">
+        <span class="airline">${d.airline}</span>
+        <span class="status">CONFIRMED</span><br>
+        <span class="flight">${d.flight}</span>
+    </div>
+
+    <div class="ticket-body">
+
+        <div class="route">
+            <div>
+                <div class="city">${d.fromCity}</div>
+                <div class="code">${d.fromCode}</div>
+            </div>
+
+            ✈️
+
+            <div>
+                <div class="city">${d.toCity}</div>
+                <div class="code">${d.toCode}</div>
+            </div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="grid">
+            <div><b>Passenger</b><br>${d.name}</div>
+            <div><b>PNR</b><br>${pnr}</div>
+        </div>
+
+        <div class="grid">
+            <div><b>Date</b><br>${d.date}</div>
+            <div><b>Time</b><br>${d.time}</div>
+        </div>
+
+        <div class="grid">
+            <div><b>Boarding</b><br>${d.boarding}</div>
+            <div><b>Gate</b><br>${d.gate}</div>
+        </div>
+
+        <div class="grid">
+            <div><b>Seat</b><br>${d.seat}</div>
+            <div><b>Class</b><br>Economy</div>
+        </div>
+
+    </div>
+
+    <div class="ticket-footer">
+        <div class="barcode">${randomBarcode()}</div>
+        <div style="font-size:11px;">SCAN AT GATE</div>
+    </div>
+    `;
 }
 
-// auto isi dari URL
-let url = new URLSearchParams(window.location.search);
-let p = url.get("pnr");
-if(p){
-    document.getElementById("pnr").value = p;
-    cek();
-}
+</script>
 
-</script></body>
+</body>
 </html>
