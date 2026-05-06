@@ -1,1 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNR Checker</title>
 
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: black;
+  color: white;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #1c1c1e;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+input, button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+}
+
+input {
+  background: #333;
+  color: white;
+}
+
+button {
+  background: red;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.status {
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.timer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 20px;
+  color: #00ffcc;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Flight PNR Checker</h1>
+
+  <div class="card">
+    <h2>✈️ Flight PNR Checker</h2>
+    <p>Test PNR:</p>
+    <p><b>PNR123456</b> (Pending)</p>
+    <p><b>4E5CY5</b> (Issued)</p>
+
+    <input type="text" id="pnr" placeholder="Masukkan kode PNR">
+    <button onclick="cekPNR()">Cek Status</button>
+  </div>
+
+  <div id="result" class="card hidden">
+
+    <div class="grid">
+      <div><span>Nama</span><b id="nama"></b></div>
+      <div><span>Maskapai</span><b id="maskapai"></b></div>
+    </div>
+
+    <h3 id="route"></h3>
+
+    <div class="grid">
+      <div><span>Flight</span><b id="flight"></b></div>
+      <div><span>Jam</span><b id="jam"></b></div>
+      <div><span>Gate</span><b id="gate"></b></div>
+      <div><span>Seat</span><b id="seat"></b></div>
+      <div><span>Boarding</span><b id="boarding"></b></div>
+      <div><span>Total</span><b id="total"></b></div>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="timer" class="timer"></div>
+
+  </div>
+
+</div>
+
+<script>
+let interval;
+
+// ================= DATA =================
+const database = {
+  "PNR123456": {
+    nama: "Ny. Muliani",
+    maskapai: "Batik Air",
+    route: "Pontianak (PNK) ✈ Makassar (UPG)",
+    flight: "ID-6316",
+    jam: "14:55 - 19:20",
+    gate: "A2",
+    seat: "18A",
+    boarding: "14:25",
+    total: "Rp 1.739.900",
+    status: "pending"
+  },
+
+  "4E5CY5": {
+    nama: "Andika Fendi Pratama",
+    maskapai: "Sriwijaya Air",
+    route: "Surabaya (SUB) ✈ Ternate (TTE)",
+    flight: "SJ562 / SJ6982",
+    jam: "20:05 - 12:55 (+1 hari)",
+    gate: "-",
+    seat: "-",
+    boarding: "18:30",
+    total: "Rp 2.231.800",
+    status: "issued"
+  }
+};
+
+// ================= CEK PNR =================
+function cekPNR() {
+  const pnr = document.getElementById("pnr").value.trim();
+
+  if (!database[pnr]) {
+    alert("PNR tidak ditemukan");
+    return;
+  }
+
+  const data = database[pnr];
+
+  document.getElementById("result").classList.remove("hidden");
+
+  // isi data
+  document.getElementById("nama").innerText = data.nama;
+  document.getElementById("maskapai").innerText = data.maskapai;
+  document.getElementById("route").innerText = data.route;
+  document.getElementById("flight").innerText = data.flight;
+  document.getElementById("jam").innerText = data.jam;
+  document.getElementById("gate").innerText = data.gate;
+  document.getElementById("seat").innerText = data.seat;
+  document.getElementById("boarding").innerText = data.boarding;
+  document.getElementById("total").innerText = data.total;
+
+  clearInterval(interval);
+
+  // ================= STATUS =================
+  if (data.status === "issued") {
+    document.getElementById("status").innerText = "✅ ISSUED";
+    document.getElementById("status").style.background = "green";
+    document.getElementById("timer").style.display = "none";
+  } else {
+    document.getElementById("status").innerText = "⏳ Pending Payment";
+    document.getElementById("status").style.background = "gold";
+    document.getElementById("timer").style.display = "block";
+
+    startTimer(pnr);
+  }
+}
+
+// ================= TIMER =================
+function startTimer(pnr) {
+  let expiredAt = localStorage.getItem("expired_" + pnr);
+
+  if (!expiredAt) {
+    expiredAt = Date.now() + (30 * 60 * 1000);
+    localStorage.setItem("expired_" + pnr, expiredAt);
+  }
+
+  interval = setInterval(() => {
+    const remaining = expiredAt - Date.now();
+
+    if (remaining <= 0) {
+      document.getElementById("timer").innerText = "00:00";
+      document.getElementById("status").innerText = "❌ Expired";
+      document.getElementById("status").style.background = "red";
+      localStorage.removeItem("expired_" + pnr);
+      clearInterval(interval);
+      return;
+    }
+
+    const min = Math.floor(remaining / 60000);
+    const sec = Math.floor((remaining % 60000) / 1000);
+
+    document.getElementById("timer").innerText =
+      `${min}:${sec.toString().padStart(2, "0")}`;
+  }, 1000);
+}
+
+// ================= AUTO LOAD =================
+window.onload = function () {
+  for (let pnr in database) {
+    const expired = localStorage.getItem("expired_" + pnr);
+    if (expired) {
+      document.getElementById("pnr").value = pnr;
+      cekPNR();
+      break;
+    }
+  }
+};
+</script>
+
+</body>
+</html>
